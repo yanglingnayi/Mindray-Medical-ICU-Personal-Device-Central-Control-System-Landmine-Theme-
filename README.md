@@ -1,4 +1,4 @@
-<img width="4096" height="1918" alt="28ddcea21374252e9b5555cb26170d36" src="https://github.com/user-attachments/assets/b3438c78-b2d0-4747-8bd0-fb0ceaad277a" />Mindray-Medical-ICU-Personal-Device-Central-Control-System-Landmine-Theme-
+Mindray-Medical-ICU-Personal-Device-Central-Control-System-Landmine-Theme-BETA
 BETA # ♡ Mindray-Medical-ICU-Personal-Device-Central-Control-System-Landmine-Theme-BETA 🖤🎀
 
 > 🖤 **不用买迈瑞中央站，只要插网线，就能把好几台监护仪都收到电脑里实时看！**
