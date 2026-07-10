@@ -1,4 +1,5 @@
-<img width="4096" height="1918" alt="28ddcea21374252e9b5555cb26170d36" src="https://github.com/user-attachments/assets/b3438c78-b2d0-4747-8bd0-fb0ceaad277a" /># ♡ Mindray-Medical-ICU-Personal-Device-Central-Control-System-Landmine-Theme-BETA 🖤🎀
+<img width="4096" height="1918" alt="28ddcea21374252e9b5555cb26170d36" src="https://github.com/user-attachments/assets/b3438c78-b2d0-4747-8bd0-fb0ceaad277a" />Mindray-Medical-ICU-Personal-Device-Central-Control-System-Landmine-Theme-
+BETA # ♡ Mindray-Medical-ICU-Personal-Device-Central-Control-System-Landmine-Theme-BETA 🖤🎀
 
 > 🖤 **不用买迈瑞中央站，只要插网线，就能把好几台监护仪都收到电脑里实时看！**
 > 🎀 *You can remotely record and access data without buying a central station or connecting multiple devices via network cables.*
@@ -30,8 +31,13 @@
 | 🧱 **无中央站·无网线** | **你只需要让监护仪连到同一局域网就行，其他的交给本小姐就好啦** 💕 |
 
 ---
-![Uploading 28ddcea21374252e9b5555cb26170d36.png…]()
+<img width="4096" height="1918" alt="28ddcea21374252e9b5555cb26170d36" src="https://github.com/user-attachments/assets/b3438c78-b2d0-4747-8bd0-fb0ceaad277a" />
 
+<img width="4096" height="1918" alt="28ddcea21374252e9b5555cb26170d36" src="https://github.com/user-attachments/assets/b3438c78-b2d0-4747-8bd0-fb0ceaad277a" />
+
+<img width="4096" height="1918" alt="28ddcea21374252e9b5555cb26170d36" src="https://github.com/user-attachments/assets/b3438c78-b2d0-4747-8bd0-fb0ceaad277a" />
+
+<img width="4096" height="1918" alt="28ddcea21374252e9b5555cb26170d36" src="https://github.com/user-attachments/assets/b3438c78-b2d0-4747-8bd0-fb0ceaad277a" />
 ---
 
 
