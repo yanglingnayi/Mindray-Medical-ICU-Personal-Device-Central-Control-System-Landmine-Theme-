@@ -31,15 +31,18 @@ BETA # ♡ Mindray-Medical-ICU-Personal-Device-Central-Control-System-Landmine-T
 | 🧱 **无中央站·无网线** | **你只需要让监护仪连到同一局域网就行，其他的交给本小姐就好啦** 💕 |
 
 ---
+## 监护界面
 <img width="4096" height="1918" alt="28ddcea21374252e9b5555cb26170d36" src="https://github.com/user-attachments/assets/b3438c78-b2d0-4747-8bd0-fb0ceaad277a" />
+## 开屏幕动画
+<img width="4096" height="1918" alt="96f4faeda63587d1fc1236423d027f8a" src="https://github.com/user-attachments/assets/beb2790d-6139-4ca3-b4a1-83f2791d2f86" />
+## 管理页面
+<img width="4096" height="1853" alt="eb269653f1b293c70f7b9f180719169b" src="https://github.com/user-attachments/assets/79e68432-a78f-4258-b00c-022bffd4f343" />
+## 带监护仪报警
+<img width="598" height="220" alt="14b5c898e57abd44d759867a98ef1e46" src="https://github.com/user-attachments/assets/9ae4193c-4e5e-4657-ae40-986a75d54097" />
+## 休眠模式，除去监护界面都因bgm
+<img width="3832" height="1924" alt="5832a2244f0057aca8bc11314d04c0a6" src="https://github.com/user-attachments/assets/6198d7ef-888d-4008-95f2-4c691145652e" />
 
-<img width="4096" height="1918" alt="28ddcea21374252e9b5555cb26170d36" src="https://github.com/user-attachments/assets/b3438c78-b2d0-4747-8bd0-fb0ceaad277a" />
-
-<img width="4096" height="1918" alt="28ddcea21374252e9b5555cb26170d36" src="https://github.com/user-attachments/assets/b3438c78-b2d0-4747-8bd0-fb0ceaad277a" />
-
-<img width="4096" height="1918" alt="28ddcea21374252e9b5555cb26170d36" src="https://github.com/user-attachments/assets/b3438c78-b2d0-4747-8bd0-fb0ceaad277a" />
 ---
-
 
 
 ## 🧩 项目结构 · 本小姐写的代码可是很整齐的哦 🖤
