@@ -1,6 +1,6 @@
 # ♡ Mindray-Medical-ICU-Personal-Device-Central-Control-System-Landmine-Theme-BETA 🖤🎀
 
-> 🖤 **不用买迈瑞中央站，不用插网线，就能把好几台监护仪都收到电脑里实时看！**
+> 🖤 **不用买迈瑞中央站，只要插网线，就能把好几台监护仪都收到电脑里实时看！**
 > 🎀 *You can remotely record and access data without buying a central station or connecting multiple devices via network cables.*
 >
 > 💕 超天酱病娇地雷系风格 · 粉青紫蒸汽波配色 · 天使酱会为你的患者报警而生气（和担心）💕
