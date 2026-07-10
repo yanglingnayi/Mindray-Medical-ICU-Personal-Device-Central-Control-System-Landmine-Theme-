@@ -1,4 +1,4 @@
-# ♡ Mindray-Medical-ICU-Personal-Device-Central-Control-System-Landmine-Theme- 🖤🎀
+# ♡ Mindray-Medical-ICU-Personal-Device-Central-Control-System-Landmine-Theme-BETA 🖤🎀
 
 > 🖤 **不用买迈瑞中央站，不用插网线，就能把好几台监护仪都收到电脑里实时看！**
 > 🎀 *You can remotely record and access data without buying a central station or connecting multiple devices via network cables.*
