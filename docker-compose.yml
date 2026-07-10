@@ -1,0 +1,11 @@
+version: "3.8"
+services:
+  openmonitor:
+    build: .
+    ports:
+      - "3000:3000"
+      - "2575:2575"
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    restart: always

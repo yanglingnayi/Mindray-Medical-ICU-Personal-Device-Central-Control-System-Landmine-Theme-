@@ -1,0 +1,1628 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>† OMG_KAWAII_ANGEL_MONITOR v4.2 ♡ 天使酱 †</title>
+<link rel="icon" href="/img/logo.png" type="image/png">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    background:
+        radial-gradient(circle at 20% 30%, rgba(255, 182, 193, 0.08), transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(123, 0, 255, 0.08), transparent 40%),
+        linear-gradient(135deg, #120124 0%, #1a0033 50%, #120124 100%);
+    color: #fff;
+    font-family: 'Courier New', 'Consolas', 'Microsoft YaHei', monospace;
+    padding: 10px; overflow: hidden; transition: background-color 0.1s ease;
+    min-height: 100vh;
+}
+body.alarm-active {
+    animation: twitch-bg 0.2s infinite alternate !important;
+}
+@keyframes twitch-bg {
+    0% { background-color: #5a001a; }
+    100% { background-color: #1a0006; }
+}
+.angel-top-bar {
+    display: flex; align-items: center; gap: 15px;
+    background: linear-gradient(90deg, #ff00a0 0%, #7b00ff 50%, #00f0ff 100%);
+    border: 3px solid #fff;
+    box-shadow: 4px 4px 0px #ff00a0, -2px -2px 0px #00f0ff;
+    padding: 8px 18px; margin-bottom: 10px; position: relative;
+}
+.angel-top-bar::before, .angel-top-bar::after {
+    content: "♡"; color: #fff; font-size: 14px; text-shadow: 0 0 6px #fff;
+}
+.angel-top-bar::before { margin-right: 4px; }
+.angel-top-bar::after { margin-left: 4px; }
+.cross-logo {
+    width: 36px; height: 36px; position: relative; flex-shrink: 0;
+    filter: drop-shadow(0 0 8px #fff) drop-shadow(0 0 12px #ff00a0);
+}
+.cross-logo svg { width: 100%; height: 100%; }
+.angel-title {
+    font-size: 18px; font-weight: 900; color: #fff;
+    text-shadow: 2px 2px 0 #ff00a0, -2px -2px 0 #00f0ff, 0 0 15px rgba(255,255,255,0.6);
+    letter-spacing: 2px; font-family: 'Impact', 'Courier New', monospace; flex: 0 0 auto;
+}
+.angel-subtitle {
+    font-size: 11px; color: #fff0f8; font-style: italic; letter-spacing: 1px;
+    margin-left: 4px; opacity: 0.9;
+}
+.device-bar { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+.device-bar label { font-size: 12px; font-weight: bold; color: #fff; text-shadow: 1px 1px 0 #ff00a0; }
+.device-selector {
+    background: #0b0014; border: 2px solid #fff; color: #00f0ff;
+    font-weight: bold; font-size: 12px; padding: 5px 10px; font-family: inherit;
+    cursor: pointer; min-width: 240px; box-shadow: 2px 2px 0px rgba(0,0,0,0.3);
+}
+.device-selector option { background: #120124; color: #fff; }
+.device-selector:hover { border-color: #ffdd00; color: #ffdd00; }
+.btn-manual-sleep {
+    background: #0b0014; border: 2px solid #fff; color: #00f0ff;
+    font-weight: bold; font-size: 12px; padding: 5px 12px; font-family: inherit;
+    cursor: pointer; box-shadow: 2px 2px 0px #ff00a0; letter-spacing: 1px;
+}
+.btn-manual-sleep:hover { background: #00f0ff; color: #000; }
+.btn-admin-link {
+    background: #0b0014; border: 2px solid #fff; color: #ff00a0;
+    font-weight: bold; font-size: 12px; padding: 5px 12px; font-family: inherit;
+    cursor: pointer; box-shadow: 2px 2px 0px #00f0ff; letter-spacing: 1px;
+}
+.btn-admin-link:hover { background: #ff00a0; color: #fff; }
+.container {
+    display: grid; grid-template-columns: 330px 1fr 360px;
+    grid-template-rows: 1fr 180px; gap: 12px; height: calc(100vh - 70px);
+}
+.window {
+    background: linear-gradient(180deg, #1c0030 0%, #14002a 100%);
+    border: 3px solid #ff00a0; border-radius: 4px;
+    box-shadow: 4px 4px 0px #00f0ff, inset 0 0 20px rgba(255, 0, 160, 0.1);
+    display: flex; flex-direction: column; overflow: hidden;
+}
+.window-header {
+    background: linear-gradient(90deg, #ff00a0, #7b00ff); color: #fff;
+    padding: 6px 12px; font-size: 13px; font-weight: bold; display: flex;
+    justify-content: space-between; border-bottom: 2px solid #ff00a0;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.5); letter-spacing: 1px;
+}
+.window-body { padding: 12px; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.avatar-container {
+    width: 90px; height: 90px; border: 3px dashed #ff00a0; border-radius: 50%;
+    margin: 2px auto 8px auto; overflow: hidden;
+    background: radial-gradient(circle, #3a0050 0%, #000 100%);
+    box-shadow: 0 0 18px rgba(255, 0, 160, 0.6), inset 0 0 12px rgba(255, 0, 160, 0.3);
+}
+.avatar-container img { width: 100%; height: 100%; object-fit: cover; }
+.form-group { margin-bottom: 8px; }
+.form-group label { display: block; font-size: 11px; color: #00f0ff; margin-bottom: 3px; font-weight: bold; }
+.form-group input, .form-group select {
+    width: 100%; background: #0b0014; border: 1px solid #ff00a0;
+    color: #fff; padding: 6px; font-size: 13px; outline: none;
+}
+.form-group input[readonly], .form-group input.readonly-input {
+    background: #0a0418; border-color: #555; color: #aaa; cursor: not-allowed;
+}
+.form-row { display: flex; gap: 6px; margin-bottom: 8px; }
+.form-row .form-group { margin-bottom: 0; }
+.monitor-label { color: #666 !important; }
+.btn-copy {
+    background: #ff00a0; border: 2px solid #fff; color: #fff; padding: 8px;
+    cursor: pointer; font-weight: bold; margin-top: 4px; box-shadow: 2px 2px 0px #00f0ff;
+    font-size: 12px;
+}
+.btn-copy:hover { background: #00f0ff; color: #000; }
+.vitals-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; flex: none; }
+.vital-card { background: #0b0014; padding: 12px; border: 2px solid; border-radius: 4px; }
+.vital-name { font-size: 13px; font-weight: bold; text-transform: uppercase; }
+.vital-value { font-size: 72px; font-weight: 900; margin-top: 4px; font-family: 'Impact', 'Arial Black', monospace; line-height: 1; }
+.vital-unit { font-size: 18px; color: #888; margin-left: 8px; font-weight: normal; }
+.card-hr { border-color: #00ff66; } .card-hr .vital-name, .card-hr .vital-value { color: #00ff66; text-shadow: 0 0 10px rgba(0,255,102,0.6); }
+.card-spo2 { border-color: #00aaff; } .card-spo2 .vital-name, .card-spo2 .vital-value { color: #00aaff; text-shadow: 0 0 10px rgba(0,170,255,0.6); }
+.card-rr { border-color: #ffdd00; } .card-rr .vital-name, .card-rr .vital-value { color: #ffdd00; text-shadow: 0 0 10px rgba(255,221,0,0.6); }
+.card-bp { border-color: #ffffff; } .card-bp .vital-name, .card-bp .vital-value { color: #ffffff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+.wave-area { flex: 1; display: flex; flex-direction: column; gap: 12px; overflow: hidden; }
+.wave-box { background: #05000a; border: 1px solid #ff00a0; position: relative; flex: 1; min-height: 0; overflow: hidden; }
+.wave-label { position: absolute; left: 8px; top: 6px; font-size: 11px; font-weight: bold; z-index: 10; background: rgba(5,0,10,0.8); padding: 2px 6px; border-radius: 2px; }
+canvas { width: 100%; height: 100%; display: block; }
+.history-tabs { display: flex; border-bottom: 2px solid #00f0ff; background: #0b0014; }
+.tab-btn { flex: 1; padding: 8px; background: none; border: none; color: #888; font-family: inherit; font-weight: bold; cursor: pointer; text-align: center; font-size: 12px; }
+.tab-btn.active { color: #00f0ff; background: #1c0030; border-bottom: 3px solid #ff00a0; }
+.timeline-container { flex: 1; overflow-y: auto; padding: 10px 5px; position: relative; }
+.timeline { list-style: none; position: relative; padding-left: 20px; }
+.timeline::before { content: ''; position: absolute; left: 5px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #ff00a0, #00f0ff); }
+.timeline-item { position: relative; margin-bottom: 12px; font-size: 12px; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+.timeline-item::before { content: ''; position: absolute; left: -19px; top: 4px; width: 8px; height: 8px; border-radius: 50%; background: #00f0ff; box-shadow: 0 0 6px #00f0ff; }
+.timeline-item.alarm-node::before { background: #ff0055 !important; box-shadow: 0 0 8px #ff0055 !important; }
+.tl-time { color: #ff00a0; font-weight: bold; margin-right: 6px; }
+.tl-text { color: #fff; }
+.console-panel {
+    grid-column: 1 / 4; background: #05000a; border: 3px solid #00f0ff;
+    padding: 12px; overflow-y: auto; color: #00ff66; font-size: 11px;
+    white-space: pre-wrap; word-break: break-all; font-family: 'Consolas', monospace;
+    box-shadow: 4px 4px 0px #ff00a0; line-height: 1.4;
+}
+#alarm-overlay-banner {
+    display: none; background: linear-gradient(45deg, #ff0055, #ff00a0);
+    border: 3px solid #fff; box-shadow: 0 0 40px #ff0055; color: #fff;
+    position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999;
+    padding: 15px 40px; font-weight: bold; font-size: 18px; text-align: center;
+    animation: bounce 0.2s infinite alternate; letter-spacing: 1px;
+}
+@keyframes bounce { 0% { transform: translate(-50%, 0); } 100% { transform: translate(-50%, -6px); } }
+
+/* ===== ✟ 启动动画 & NO SIGNAL & 信号不稳定 ✟ ===== */
+.angel-splash {
+    position: fixed; inset: 0; z-index: 99998;
+    background: radial-gradient(ellipse at center, #1a0033 0%, #05000f 60%, #000 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: #fff; font-family: 'Courier New', monospace;
+    transition: opacity 1s ease;
+    overflow: hidden;
+}
+.angel-splash.hide { opacity: 0; pointer-events: none; }
+
+/* ✟ 精神药品名称扩散背景 ✟ */
+.splash-drugs-bg {
+    position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+}
+.splash-drug {
+    position: absolute;
+    font-family: 'Courier New', monospace;
+    font-weight: 700;
+    letter-spacing: 2px;
+    white-space: nowrap;
+    animation: drug-rise var(--dur, 7s) linear var(--delay, 0s) infinite;
+    opacity: 0;
+    text-shadow: 0 0 8px currentColor, 0 0 14px currentColor;
+}
+@keyframes drug-rise {
+    0%   { opacity: 0; transform: translate(0, 20vh) scale(0.6); }
+    15%  { opacity: var(--maxop, 0.28); }
+    50%  { opacity: var(--maxop, 0.28); transform: translate(var(--dx, 30px), -20vh) scale(1); }
+    85%  { opacity: var(--maxop, 0.22); }
+    100% { opacity: 0; transform: translate(calc(var(--dx, 30px) * -1), -70vh) scale(1.3); }
+}
+
+.splash-logo {
+    width: 200px; height: 200px; position: relative; z-index: 5;
+    filter: drop-shadow(0 0 30px #ff00a0) drop-shadow(0 0 60px #00f0ff);
+    animation: splash-spin 2.4s ease-in-out infinite;
+}
+@keyframes splash-spin { 0%,100% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.1) rotate(4deg); } }
+.splash-title {
+    font-size: 48px; font-weight: 900; letter-spacing: 8px; z-index: 5;
+    text-shadow: 0 0 24px #ff00a0, 4px 4px 0 #ff00a0, -3px -3px 0 #00f0ff;
+    margin-top: 26px;
+    animation: splash-flicker 1.4s infinite alternate;
+}
+@keyframes splash-flicker { 0% { opacity: 0.65; } 100% { opacity: 1; text-shadow: 0 0 40px #fff, 4px 4px 0 #ff00a0; } }
+.splash-sub { font-size: 16px; color: #ff88cc; margin-top: 14px; letter-spacing: 4px; font-style: italic; z-index: 5; }
+
+/* ✟ 进度条（更慢，10s 内填满） */
+.splash-loading { margin-top: 36px; width: 420px; height: 8px; background: #0a001f; border: 2px solid #ff00a0; position: relative; overflow: hidden; box-shadow: 0 0 25px rgba(255,0,160,0.7); z-index: 5; }
+.splash-bar { height: 100%; background: linear-gradient(90deg, #ff00a0, #00f0ff); width: 0%; transition: width 0.4s ease; }
+
+/* ✟ 主状态文字 */
+.splash-status { margin-top: 22px; font-size: 14px; color: #00f0ff; letter-spacing: 3px; z-index: 5; min-height: 18px; }
+
+/* ✟ 语录/子字幕滚动区 */
+.splash-quotes {
+    margin-top: 18px; min-height: 20px; z-index: 5;
+    width: 500px; text-align: center;
+    display: flex; flex-direction: column; gap: 6px;
+}
+.splash-quote {
+    font-size: 12px; color: #ff88cc; letter-spacing: 2px;
+    opacity: 0; transform: translateY(8px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    font-style: italic;
+}
+.splash-quote.show { opacity: 1; transform: translateY(0); }
+.splash-quote.kawaii { color: #ffaaee; }
+.splash-quote.neon { color: #66ccff; text-shadow: 0 0 8px rgba(102,204,255,0.6); }
+.splash-quote.status { color: #ffccff; }
+.splash-quote.progress { color: #00f0ff; text-shadow: 0 0 6px rgba(0,240,255,0.5); font-weight: bold; }
+
+/* ✟ 倒计时显示 */
+.splash-countdown { margin-top: 26px; font-size: 11px; color: #888; letter-spacing: 2px; z-index: 5; }
+.splash-countdown b { color: #ff00a0; font-weight: bold; text-shadow: 0 0 8px rgba(255,0,160,0.6); }
+
+/* NO SIGNAL 画面 */
+.angel-nosignal {
+    position: fixed; inset: 0; z-index: 99990;
+    background:
+        radial-gradient(ellipse at 30% 20%, rgba(255,0,160,0.15), transparent 50%),
+        radial-gradient(ellipse at 70% 80%, rgba(0,240,255,0.15), transparent 50%),
+        linear-gradient(135deg, #1a0033 0%, #0a0014 50%, #000 100%);
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+    color: #fff; font-family: 'Courier New', monospace; overflow: hidden;
+}
+.angel-nosignal.show { display: flex; animation: ns-fadein 0.8s ease; }
+@keyframes ns-fadein { from { opacity: 0; } to { opacity: 1; } }
+.ns-drugs-bg {
+    position: absolute; inset: 0; pointer-events: none; z-index: 1; overflow: hidden;
+}
+.ns-drug {
+    position: absolute; font-weight: bold; letter-spacing: 1px;
+    opacity: 0; animation: ns-drug-float 12s linear infinite;
+    text-shadow: 0 0 10px currentColor; font-size: 11px; white-space: nowrap;
+}
+@keyframes ns-drug-float {
+    0%   { opacity: 0; transform: scale(0.8) translateY(20px); }
+    15%  { opacity: 0.55; }
+    50%  { opacity: 0.8; }
+    85%  { opacity: 0.5; }
+    100% { opacity: 0; transform: scale(1.3) translateY(-40px); }
+}
+.ns-screens {
+    display: flex; gap: 18px; margin-bottom: 30px; flex-wrap: wrap; justify-content: center;
+    position: relative; z-index: 2;
+}
+.ns-monitor {
+    width: 180px; height: 130px; position: relative;
+    background: #000; border: 4px solid #ff00a0; border-radius: 6px;
+    box-shadow: 0 0 0 3px #000, 0 0 30px rgba(255,0,160,0.6), inset 0 0 40px rgba(255,0,160,0.2);
+    overflow: hidden;
+}
+.ns-monitor:nth-child(2) {
+    border-color: #00f0ff;
+    box-shadow: 0 0 0 3px #000, 0 0 30px rgba(0,240,255,0.6), inset 0 0 40px rgba(0,240,255,0.2);
+}
+.ns-monitor:nth-child(3) {
+    border-color: #ffffff;
+    box-shadow: 0 0 0 3px #000, 0 0 30px rgba(255,255,255,0.4), inset 0 0 40px rgba(255,255,255,0.15);
+}
+.ns-monitor::before {
+    content: ''; position: absolute; inset: 0;
+    background: repeating-linear-gradient(0deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 3px);
+    pointer-events: none; z-index: 3;
+}
+.ns-monitor::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 0%, rgba(0,240,255,0.05) 50%, transparent 100%);
+    animation: scanline 0.12s linear infinite; pointer-events: none; z-index: 2;
+}
+@keyframes scanline { from { transform: translateY(-100%); } to { transform: translateY(100%); } }
+.ns-static {
+    position: absolute; inset: 0; z-index: 1;
+    background-image:
+        radial-gradient(circle at 20% 30%, rgba(255,0,160,0.25) 1px, transparent 2px),
+        radial-gradient(circle at 70% 60%, rgba(0,240,255,0.25) 1px, transparent 2px),
+        radial-gradient(circle at 40% 80%, rgba(255,255,255,0.18) 1px, transparent 2px),
+        linear-gradient(90deg, transparent 49%, rgba(255,255,255,0.4) 50%, transparent 51%);
+    background-size: 8px 8px, 11px 11px, 14px 14px, 3px 100%;
+    animation: ns-noise 0.08s steps(3) infinite;
+    opacity: 0.85;
+}
+.ns-monitor:nth-child(2) .ns-static {
+    background-image:
+        radial-gradient(circle at 50% 40%, rgba(0,240,255,0.3) 1px, transparent 2px),
+        radial-gradient(circle at 30% 70%, rgba(255,170,238,0.25) 1px, transparent 2px),
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.2) 1px, transparent 2px),
+        linear-gradient(90deg, transparent 49%, rgba(0,240,255,0.45) 50%, transparent 51%);
+    background-size: 6px 6px, 9px 9px, 13px 13px, 5px 100%;
+    animation: ns-noise-2 0.1s steps(4) infinite;
+    opacity: 0.9;
+}
+.ns-monitor:nth-child(3) .ns-static {
+    background-image:
+        radial-gradient(circle at 10% 50%, rgba(255,255,255,0.3) 1px, transparent 2px),
+        radial-gradient(circle at 60% 30%, rgba(255,0,160,0.25) 1px, transparent 2px),
+        radial-gradient(circle at 90% 80%, rgba(0,240,255,0.2) 1px, transparent 2px),
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.15) 0px, rgba(255,255,255,0.15) 2px, transparent 2px, transparent 6px);
+    background-size: 7px 7px, 10px 10px, 15px 15px, 100% 10px;
+    animation: ns-noise-3 0.09s steps(5) infinite;
+    opacity: 0.88;
+}
+@keyframes ns-noise {
+    0% { transform: translate(0, 0); background-position: 0 0, 0 0, 0 0, 0 0; }
+    33% { transform: translate(-2px, 1px); background-position: 10px -5px, -8px 6px, 3px -4px, -5px 0; }
+    66% { transform: translate(1px, -2px); background-position: -6px 8px, 4px -7px, -10px 5px, 15px 0; }
+    100% { transform: translate(-1px, 2px); background-position: 8px 3px, -3px -9px, 6px 2px, -10px 0; }
+}
+@keyframes ns-noise-2 {
+    0% { transform: translate(-1px, -1px); background-position: 5px 0, -3px 5px, 8px -2px, 0 0; }
+    25% { transform: translate(2px, 0); background-position: -8px 3px, 5px -6px, -4px 8px, -8px 0; }
+    50% { transform: translate(0, 2px); background-position: 7px -4px, -6px 2px, 9px 5px, 12px 0; }
+    75% { transform: translate(-2px, -2px); background-position: -5px 6px, 8px 0, -7px -5px, -3px 0; }
+    100% { transform: translate(1px, 1px); background-position: 3px -7px, -4px 4px, 5px -3px, 8px 0; }
+}
+@keyframes ns-noise-3 {
+    0% { transform: translate(0, 0); background-position: 0 0, 0 0, 0 0, 0 0; }
+    20% { transform: translate(-3px, 2px); background-position: 12px 3px, -5px 8px, 7px -5px, 0 2px; }
+    40% { transform: translate(2px, -3px); background-position: -8px -2px, 9px 5px, -3px 8px, 0 -4px; }
+    60% { transform: translate(-1px, 3px); background-position: 5px -6px, -7px -3px, 10px 3px, 0 6px; }
+    80% { transform: translate(3px, 1px); background-position: -6px 8px, 4px -7px, -8px -2px, 0 -8px; }
+    100% { transform: translate(-2px, -2px); background-position: 8px 5px, -5px 2px, 5px -7px, 0 10px; }
+}
+.ns-tear {
+    position: absolute; left: 0; right: 0; height: 2px; z-index: 4; pointer-events: none;
+    background: linear-gradient(90deg, transparent, currentColor, transparent);
+    box-shadow: 0 0 15px currentColor;
+    animation: ns-tear-move 2.3s linear infinite;
+    opacity: 0.85;
+}
+.ns-monitor:nth-child(1) .ns-tear { color: #ff00a0; animation-duration: 1.8s; }
+.ns-monitor:nth-child(2) .ns-tear { color: #00f0ff; animation-duration: 2.5s; }
+.ns-monitor:nth-child(3) .ns-tear { color: #fff; animation-duration: 3.1s; }
+@keyframes ns-tear-move {
+    0% { top: -5px; }
+    100% { top: 135px; }
+}
+.ns-monitor-label {
+    position: absolute; bottom: 6px; left: 0; right: 0; text-align: center;
+    font-size: 11px; color: #ff88cc; letter-spacing: 2px; font-weight: bold; z-index: 4;
+    text-shadow: 0 0 6px #ff00a0;
+}
+.ns-title {
+    font-size: 80px; font-weight: 900; letter-spacing: 14px;
+    color: #fff; text-shadow: 5px 5px 0 #ff00a0, -3px -3px 0 #00f0ff, 0 0 40px #ff00a0;
+    animation: ns-glitch 0.5s infinite alternate;
+    margin-bottom: 10px;
+}
+@keyframes ns-glitch {
+    0% { transform: translate(0, 0) skewX(0deg); text-shadow: 5px 5px 0 #ff00a0, -3px -3px 0 #00f0ff, 0 0 40px #ff00a0; }
+    100% { transform: translate(-2px, 1px) skewX(-1deg); text-shadow: 8px 2px 0 #ff1155, -6px -4px 0 #00f0ff, 0 0 60px #fff; }
+}
+.ns-subtitle { font-size: 18px; color: #ff88cc; letter-spacing: 5px; font-style: italic; margin-bottom: 20px; }
+.ns-info { font-size: 14px; color: #00f0ff; letter-spacing: 2px; margin-top: 10px; }
+.ns-heart { color: #ff00a0; animation: heart-beat 1s infinite; font-size: 20px; margin: 0 6px; }
+@keyframes heart-beat { 0%,100% { transform: scale(1); } 50% { transform: scale(1.3); } }
+.ns-timer { margin-top: 25px; font-size: 13px; color: #888; letter-spacing: 2px; }
+
+/* ✟ NO SIGNAL 点击恢复 & 音乐控制 */
+.ns-hint {
+    margin-top: 28px; font-size: 14px; color: #ffaaee; letter-spacing: 3px;
+    text-shadow: 0 0 10px rgba(255,170,238,0.6);
+    animation: ns-pulse 1.2s ease-in-out infinite alternate;
+    cursor: pointer;
+}
+@keyframes ns-pulse { 0% { opacity: 0.55; transform: scale(1); } 100% { opacity: 1; transform: scale(1.04); } }
+
+.ns-music-btn {
+    margin-top: 20px; font-size: 12px; cursor: pointer;
+    padding: 8px 22px; border: 2px solid #ff00a0;
+    background: #1a0033; color: #ff00a0;
+    letter-spacing: 3px; font-family: 'Courier New', monospace;
+    box-shadow: 0 0 12px rgba(255,0,160,0.5);
+    transition: all 0.25s ease;
+}
+.ns-music-btn:hover { background: #ff00a0; color: #1a0033; box-shadow: 0 0 25px rgba(255,0,160,0.9); }
+.ns-music-btn.playing { background: #ff00a0; color: #0a0014; }
+.ns-music-btn.playing:hover { background: #0a0014; color: #ff00a0; }
+
+.angel-nosignal { cursor: pointer; }
+
+/* 全局信号不稳定效果（叠加层） */
+.angel-signal-glitch {
+    position: fixed; inset: 0; z-index: 99995; pointer-events: none;
+    display: none;
+}
+.angel-signal-glitch.show { display: block; }
+.angel-signal-glitch::before {
+    content: ''; position: absolute; inset: 0;
+    background: repeating-linear-gradient(0deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px, transparent 1px, transparent 4px);
+    mix-blend-mode: overlay;
+}
+.angel-signal-glitch::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 0%, rgba(255,0,160,0.03) 30%, transparent 50%, rgba(0,240,255,0.03) 70%, transparent 100%);
+    animation: scanline 0.15s linear infinite;
+}
+.glitch-tear {
+    position: absolute; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, transparent, #ff00a0, #00f0ff, transparent);
+    opacity: 0.8;
+    animation: tear-move 0.6s linear infinite;
+    box-shadow: 0 0 20px #ff00a0;
+}
+@keyframes tear-move {
+    0% { top: 0%; opacity: 0; }
+    10% { opacity: 0.9; }
+    90% { opacity: 0.9; }
+    100% { top: 100%; opacity: 0; }
+}
+.glitch-shake { animation: shake 0.08s infinite; }
+@keyframes shake {
+    0%,100% { transform: translate(0, 0); }
+    25% { transform: translate(-2px, 1px); }
+    50% { transform: translate(1px, -2px); }
+    75% { transform: translate(-1px, 2px); }
+}
+</style>
+</head>
+<body>
+
+<!-- ✟ 启动动画 SPLASH ✟ -->
+<div id="angel-splash" class="angel-splash">
+    <div id="splash-drugs-bg" class="splash-drugs-bg"></div>
+    <svg class="splash-logo" viewBox="0 0 100 100">
+        <polygon points="50,5 95,50 50,95 5,50" fill="none" stroke="#ff88cc" stroke-width="1.2" opacity="0.7"/>
+        <polygon points="50,15 85,50 50,85 15,50" fill="none" stroke="#fff" stroke-width="1.5" opacity="0.9"/>
+        <rect x="25" y="45" width="50" height="10" rx="2" fill="#fff"/>
+        <rect x="45" y="25" width="10" height="50" rx="2" fill="#fff"/>
+        <circle cx="50" cy="50" r="7" fill="#ff00a0"/>
+        <circle cx="50" cy="50" r="3" fill="#fff"/>
+        <text x="50" y="12" text-anchor="middle" font-size="8" fill="#ff88cc">♡</text>
+        <text x="50" y="92" text-anchor="middle" font-size="8" fill="#ff88cc">♡</text>
+    </svg>
+    <div class="splash-title">✟ 天使酱 ✟</div>
+    <div class="splash-sub">// OMG_KAWAII_ANGEL_MONITOR ♡ v4.2 //</div>
+    <div class="splash-loading"><div class="splash-bar" id="splash-bar"></div></div>
+    <div class="splash-status" id="splash-status">♡ 正在与监护仪进行灵魂通讯 ♡</div>
+    <div class="splash-quotes" id="splash-quotes">
+        <div class="splash-quote neon">// 正在建立医疗级双栈通道 //</div>
+        <div class="splash-quote kawaii">// 正在加载超天酱地雷系风格模块 //</div>
+        <div class="splash-quote status">// 正在扫描附近的监护仪信号 //</div>
+    </div>
+    <div class="splash-countdown">剩余等待时间 <b id="splash-count">10</b> 秒后自动进入主程序</div>
+</div>
+
+<!-- ✟ NO SIGNAL 画面 ✟ -->
+<div id="angel-nosignal" class="angel-nosignal">
+    <div id="ns-drugs-bg" class="ns-drugs-bg"></div>
+    <div class="ns-screens">
+        <div class="ns-monitor"><div class="ns-static"></div><div class="ns-tear"></div><div class="ns-monitor-label">♡ ECG ♡ MONITOR-1</div></div>
+        <div class="ns-monitor"><div class="ns-static"></div><div class="ns-tear"></div><div class="ns-monitor-label">✦ SpO₂ ✦ MONITOR-2</div></div>
+        <div class="ns-monitor"><div class="ns-static"></div><div class="ns-tear"></div><div class="ns-monitor-label">✟ NIBP ♡ MONITOR-3</div></div>
+    </div>
+    <div class="ns-title">NO SIGNAL</div>
+    <div class="ns-subtitle">// 监护仪信号丢失 / 连接中断 //</div>
+    <div class="ns-info">✟ 请检查监护仪电源与电缆连接 ✟</div>
+    <div class="ns-info">已离线<span class="ns-heart">♡</span><span id="ns-offline-time">0</span> 秒</div>
+    <div class="ns-timer">最近一次有效数据: <span id="ns-last-time">—</span></div>
+    <div class="ns-hint" id="ns-hint">✟ 点击任意位置唤醒 / 继续监听监护仪 ✟</div>
+    <button class="ns-music-btn" id="ns-music-btn">♪ 暂停音乐</button>
+    <audio id="ns-audio" src="/audio/no.mp3" loop preload="auto"></audio>
+</div>
+
+<!-- ✟ 信号不稳定叠加层 ✟ -->
+<div id="angel-signal-glitch" class="angel-signal-glitch">
+    <div class="glitch-tear"></div>
+</div>
+
+<div id="alarm-overlay-banner">⚠️ † HARDWARE CRITICAL ALARM 流爆发现场 † ⚠️ <br><span id="alarm-msg-sub" style="font-size:13px;color:#ffff00;"></span></div>
+<div id="angel-alarm-modal" class="angel-alarm-modal"><button class="angel-alarm-close" onclick="dismissAngelAlarm()">✕</button><div id="alarm-severity-display"></div><div id="alarm-title-display" class="alarm-title">† 异常检测 †</div><div id="alarm-subtitle-display" class="alarm-subtitle">// Angel-chan Alert Monitor //</div><div id="alarm-analysis-display" class="alarm-analysis"><div style="margin-bottom:8px;"><b style="color:#ff88cc;">† 触发指标：</b><span id="aam-metric">—</span></div><div style="margin-bottom:8px;"><b style="color:#ff88cc;">† 当前数值：</b><span class="danger" id="aam-value">—</span></div><div style="margin-bottom:8px;"><b style="color:#ff88cc;">† 参考范围：</b><span id="aam-range" style="color:#88ffcc;">—</span></div><div style="margin-bottom:8px;"><b style="color:#ff88cc;">† 可能原因：</b><span id="aam-cause">—</span></div><div style="margin-bottom:8px;"><b style="color:#ff88cc;">† 建议操作：</b><span id="aam-action">—</span></div></div><div id="alarm-raw-display" class="alarm-raw"></div><button class="alarm-dismiss-btn" onclick="dismissAngelAlarm()">† 我知道了，继续监护 †</button></div>
+<div id="angel-alarm-toast" class="angel-alarm-toast"><div id="toast-header" class="toast-header">† 提示 †</div><div id="toast-body" class="toast-body">—</div></div>
+<script>(function(){const css=["#alarm-overlay-banner{display:none!important;}",".angel-alarm-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.9);width:92%;max-width:780px;background:linear-gradient(135deg,#1a0033 0%,#2a0055 100%);border:5px solid #ff00a0;box-shadow:0 0 0 3px #fff,0 0 0 8px #ff00a0,0 0 80px rgba(255,0,160,0.8),0 20px 80px rgba(0,0,0,0.8);z-index:99999;padding:20px 24px;color:#fff;font-family:'Courier New',monospace;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease;border-radius:8px;}",".angel-alarm-modal.show{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:auto;animation:angel-pulse .8s infinite alternate;}","@keyframes angel-pulse{0%{box-shadow:0 0 0 3px #fff,0 0 0 8px #ff00a0,0 0 60px rgba(255,0,160,.6),0 20px 80px rgba(0,0,0,.8);}100%{box-shadow:0 0 0 3px #fff,0 0 0 10px #00f0ff,0 0 120px rgba(0,240,255,.7),0 20px 80px rgba(0,0,0,.8);}}",".alarm-severity-badge{display:inline-block;padding:8px 22px;font-size:28px;font-weight:900;letter-spacing:3px;margin-bottom:12px;text-shadow:3px 3px 0 #000,0 0 20px currentColor;border:3px solid currentColor;border-radius:4px;animation:sev-blink .4s infinite alternate;}","@keyframes sev-blink{0%{opacity:.9;}100%{opacity:1;transform:scale(1.03);}}",".severity-P0{color:#ff1155;background:#2a0010;}.severity-P1{color:#ffaa00;background:#2a1500;}.severity-P2{color:#ffdd00;background:#2a2000;}.severity-P3{color:#00f0ff;background:#00101a;}",".alarm-title{font-size:38px;font-weight:900;color:#fff;letter-spacing:4px;text-shadow:4px 4px 0 #ff00a0,-2px -2px 0 #00f0ff,0 0 25px #fff;margin-bottom:4px;line-height:1.2;}",".alarm-subtitle{font-size:14px;color:#ff88cc;margin-bottom:15px;font-style:italic;letter-spacing:1px;}",".alarm-analysis{background:rgba(0,0,0,.4);border-left:5px solid currentColor;padding:14px 16px;margin:14px 0;border-radius:4px;color:inherit;font-size:14px;line-height:1.6;}",".alarm-analysis .danger{color:#ff5588;font-weight:bold;}",".alarm-raw{background:rgba(0,0,0,.6);padding:10px 14px;border-radius:4px;font-size:12px;color:#aaa;margin-bottom:14px;border:1px dashed #444;}",".angel-alarm-close{position:absolute;top:10px;right:14px;background:none;border:2px solid #fff;color:#fff;font-size:14px;font-weight:bold;width:32px;height:32px;border-radius:50%;cursor:pointer;}",".angel-alarm-close:hover{background:#ff00a0;color:#fff;}",".alarm-dismiss-btn{width:100%;background:linear-gradient(90deg,#ff00a0,#7b00ff);border:3px solid #fff;color:#fff;padding:14px;font-size:16px;font-weight:bold;cursor:pointer;letter-spacing:2px;box-shadow:4px 4px 0 #00f0ff;}",".alarm-dismiss-btn:hover{background:linear-gradient(90deg,#00f0ff,#ff00a0);}",".angel-alarm-toast{position:fixed;bottom:20px;right:20px;width:340px;background:linear-gradient(135deg,#1a0033 0%,#2a0055 100%);border:3px solid;border-color:#00f0ff;padding:12px 16px;z-index:99998;opacity:0;transform:translateX(400px);transition:all .3s ease;box-shadow:4px 4px 0 #ff00a0;border-radius:4px;}",".angel-alarm-toast.show{opacity:1;transform:translateX(0);}",".toast-header{font-size:13px;font-weight:bold;margin-bottom:6px;letter-spacing:1px;}",".toast-body{font-size:12px;color:#fff;line-height:1.5;}"];const s=document.createElement('style');s.textContent=css.join('');document.head.appendChild(s);})();
+</script>
+
+<div class="angel-top-bar">
+    <div class="cross-logo">
+        <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="20,2 38,20 20,38 2,20" fill="none" stroke="#ff88cc" stroke-width="1" opacity="0.7"/>
+            <polygon points="20,6 34,20 20,34 6,20" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.9"/>
+            <rect x="8" y="18" width="24" height="4" rx="1" fill="#ffffff"/>
+            <rect x="18" y="8" width="4" height="24" rx="1" fill="#ffffff"/>
+            <circle cx="20" cy="20" r="3.5" fill="#ff00a0"/>
+            <circle cx="20" cy="20" r="1.5" fill="#ffffff"/>
+            <text x="20" y="5" text-anchor="middle" font-size="5" fill="#ff88cc" opacity="0.8">♡</text>
+            <text x="20" y="37" text-anchor="middle" font-size="5" fill="#ff88cc" opacity="0.8">♡</text>
+            <text x="3" y="22" text-anchor="middle" font-size="5" fill="#00f0ff" opacity="0.6">✦</text>
+            <text x="37" y="22" text-anchor="middle" font-size="5" fill="#00f0ff" opacity="0.6">✦</text>
+        </svg>
+    </div>
+    <span class="angel-title">† 天使酱の医疗监护台 †</span>
+    <span class="angel-subtitle">// OMG_KAWAII_ANGEL_MONITOR v4.2 ♡ 24h 实时守护 //</span>
+    <div class="device-bar">
+        <label>⚕️ 当前监护仪：</label>
+        <select id="device_select" class="device-selector" onchange="onDeviceSelected()">
+            <option value="">-- 等待设备接入 --</option>
+        </select>
+        <button id="btn-manual-sleep" class="btn-manual-sleep" onclick="manualEnterSleep()" title="手动进入休眠">💤 手动休眠</button>
+        <button class="btn-admin-link" onclick="location.href='/admin'" title="进入后台管理">⚙️ 管理台</button>
+    </div>
+</div>
+
+<div class="container">
+    <div class="window">
+        <div class="window-header">
+            <span>♡ PATIENT_PROFILE.EXE ♡</span>
+            <span style="font-size:10px;opacity:0.8;">(只读)</span>
+        </div>
+        <div class="window-body">
+            <div class="avatar-container">
+                <img id="avatar-preview" src="/img/tu.jpg" onerror="this.src='https://api.dicebear.com/7.x/adventurer/svg?seed=Chouten'"/>
+            </div>
+            <div class="form-group"><label class="monitor-label">监护仪 SN（监护来源·只读）</label>
+                <input type="text" id="dev_sn" value="-- 接入中 --" readonly class="readonly-input">
+            </div>
+            <div class="form-group"><label class="monitor-label">患者姓名（监护来源·只读）</label>
+                <input type="text" id="p_name" value="" readonly class="readonly-input">
+            </div>
+            <div style="border-top: 1px dashed #333; margin: 8px 0;"></div>
+            <div class="form-row">
+                <div class="form-group" style="flex:1;"><label class="monitor-label">性别</label>
+                    <input type="text" id="p_gender" value="" readonly class="readonly-input">
+                </div>
+                <div class="form-group" style="flex:1;"><label class="monitor-label">年龄</label>
+                    <input type="text" id="p_age" value="" readonly class="readonly-input">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group" style="flex:2;"><label class="monitor-label">医院</label>
+                    <input type="text" id="p_hospital" value="" readonly class="readonly-input">
+                </div>
+                <div class="form-group" style="flex:2;"><label class="monitor-label">科室</label>
+                    <input type="text" id="p_dept" value="" readonly class="readonly-input">
+                </div>
+                <div class="form-group" style="flex:1;"><label class="monitor-label">床位号</label>
+                    <input type="text" id="p_bed" value="" readonly class="readonly-input">
+                </div>
+            </div>
+            <div class="form-group"><label class="monitor-label">身份证号</label>
+                <input type="text" id="p_idcard" value="" readonly class="readonly-input">
+            </div>
+            <div class="form-group"><label class="monitor-label">联系电话</label>
+                <input type="text" id="p_phone" value="" readonly class="readonly-input">
+            </div>
+            <div class="form-row">
+                <div class="form-group" style="flex:1;"><label class="monitor-label">入院时间</label>
+                    <input type="text" id="p_admission" value="" readonly class="readonly-input">
+                </div>
+                <div class="form-group" style="flex:1;"><label class="monitor-label">主管医生</label>
+                    <input type="text" id="p_doctor" value="" readonly class="readonly-input">
+                </div>
+            </div>
+            <div class="form-group"><label class="monitor-label">诊断 / 主诉</label>
+                <input type="text" id="p_diagnosis" value="" readonly class="readonly-input">
+            </div>
+            <div class="form-group"><label class="monitor-label">备注</label>
+                <input type="text" id="p_note" value="" readonly class="readonly-input">
+            </div>
+            <button class="btn-copy" onclick="copyPatientInfo()" style="margin-top:5px;">📋 复制档案摘要</button>
+            <button class="btn-copy" onclick="exportVitalsCsv()" style="margin-top:5px;background:#00f0ff;color:#000;">📥 导出 CSV 归档</button>
+            <button class="btn-copy" onclick="archiveBingli()" style="margin-top:5px;background:#ffcc00;color:#000;">📂 归档病历（bingli/）</button>
+            <button class="btn-copy" onclick="loadHistoryFromDb(24)" style="margin-top:5px;">🔁 拉取 24h 历史</button>
+            <button class="btn-copy" onclick="window.open('/admin','_blank')" style="margin-top:5px;background:#555;">🛠 档案管理后台</button>
+            <div style="font-size:11px;color:#888;margin-top:8px;" id="history-status">离线历史: 待同步...</div>
+        </div>
+    </div>
+
+    <div class="window">
+        <div class="window-header"><span>♡ REALTIME_TELEM_CORE.EXE ♡ 实时体征流控中枢 ♡</span></div>
+        <div class="window-body">
+            <div class="vitals-grid">
+                <div class="vital-card card-hr" id="card-hr">
+                    <div class="vital-name">† ECG 心率 HR †</div>
+                    <div class="vital-value"><span id="v_hr">0</span><span class="vital-unit">bpm</span></div>
+                </div>
+                <div class="vital-card card-spo2" id="card-spo2">
+                    <div class="vital-name">† 血氧 SpO₂ †</div>
+                    <div class="vital-value"><span id="v_spo2">0</span><span class="vital-unit">%</span></div>
+                </div>
+                <div class="vital-card card-bp" id="card-bp">
+                    <div class="vital-name">† 无创血压 NIBP †</div>
+                    <div class="vital-value" style="font-size:58px;"><span id="v_bp">—/—</span></div>
+                </div>
+                <div class="vital-card card-rr" id="card-rr">
+                    <div class="vital-name">† 呼吸 RR †</div>
+                    <div class="vital-value"><span id="v_rr">0</span><span class="vital-unit">rpm</span></div>
+                </div>
+            </div>
+            <div class="wave-area">
+                <div class="wave-box"><div class="wave-label" style="color: #00ff66;">🧬 ECG HR 时序点云 (绿)</div><canvas id="canvas-ecg"></canvas></div>
+                <div class="wave-box"><div class="wave-label" style="color: #00aaff;">🩸 SpO₂ 粒子散点图 (蓝)</div><canvas id="canvas-spo2"></canvas></div>
+                <div class="wave-box"><div class="wave-label" style="color: #ffdd00;">🫁 RR 呼吸物理频率流 (黄)</div><canvas id="canvas-rr"></canvas></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="window">
+        <div class="window-header"><span>✦ DATA_HISTORY_WORKSPACE.EXE ✦ 历史与报警流 ✦</span></div>
+        <div class="history-tabs">
+            <button class="tab-btn active" onclick="switchTab('timeline')">† 历史时间轴 †</button>
+            <button class="tab-btn" onclick="clearTimelineLocal()">🧹 清空列表</button>
+        </div>
+        <div class="window-body" style="padding: 10px;">
+            <div class="timeline-container">
+                <ul class="timeline" id="timeline-flow">
+                    <li class="timeline-item"><span class="tl-time">系统</span><span class="tl-text">历史监听引擎成功上线...</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="console-panel" id="console-log">† [Angel Core Framework v4.2] 双端口全载波就绪。2575 常态流、2576 报警流物理数据全解析就绪...
+</div>
+</div>
+
+<script>
+const canvasEcg = document.getElementById('canvas-ecg');
+const canvasSpo2 = document.getElementById('canvas-spo2');
+const canvasRr = document.getElementById('canvas-rr');
+
+function initCanvas(canvas) {
+    const ctx = canvas.getContext('2d');
+    canvas.width = canvas.parentElement.clientWidth;
+    canvas.height = canvas.parentElement.clientHeight;
+    return { canvas, ctx };
+}
+
+let ecg = initCanvas(canvasEcg), spo2 = initCanvas(canvasSpo2), rr = initCanvas(canvasRr);
+
+const resizeObserver = new ResizeObserver(() => {
+    ecg = initCanvas(canvasEcg); spo2 = initCanvas(canvasSpo2); rr = initCanvas(canvasRr);
+});
+resizeObserver.observe(canvasEcg.parentElement);
+
+const MAX_STACK_POINTS = 300;
+let hrStackPoints = [];
+let spo2StackPoints = [];
+let rrStackPoints = [];
+
+let currentDeviceId = "";
+let connectedDevices = [];
+
+function renderPointClouds() {
+    drawSingleCloud(ecg, 'hr', hrStackPoints, 40, 160, '#00ff66', 60, 100);
+    drawSingleCloud(spo2, 'spo2', spo2StackPoints, 80, 100, '#00aaff', 95, 100);
+    drawSingleCloud(rr, 'rr', rrStackPoints, 5, 40, '#ffdd00', 12, 20);
+    requestAnimationFrame(renderPointClouds);
+}
+
+function drawSingleCloud(obj, dataKey, stackArr, minVal, maxVal, color, refLow, refHigh) {
+    const ctx = obj.ctx; const w = obj.canvas.width; const h = obj.canvas.height;
+    ctx.fillStyle = '#05000a'; ctx.fillRect(0, 0, w, h);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)'; ctx.lineWidth = 1;
+    for (let i = 1; i < 6; i++) {
+        ctx.beginPath(); ctx.moveTo(0, (h / 6) * i); ctx.lineTo(w, (h / 6) * i); ctx.stroke();
+    }
+    for (let i = 1; i < 10; i++) {
+        ctx.beginPath(); ctx.moveTo((w / 10) * i, 0); ctx.lineTo((w / 10) * i, h); ctx.stroke();
+    }
+    function yOfVal(v) {
+        const percent = (v - minVal) / (maxVal - minVal);
+        const clippedPercent = Math.max(0, Math.min(1, percent));
+        return h - (clippedPercent * (h * 0.75) + h * 0.12);
+    }
+    if (refLow !== undefined) {
+        const yLow = yOfVal(refLow);
+        ctx.strokeStyle = 'rgba(0, 255, 120, 0.45)';
+        ctx.setLineDash([6, 4]);
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(0, yLow); ctx.lineTo(w, yLow); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = 'rgba(0, 255, 120, 0.9)';
+        ctx.font = '11px Consolas';
+        ctx.fillText('LOW ' + refLow, 6, yLow - 4);
+    }
+    if (refHigh !== undefined) {
+        const yHigh = yOfVal(refHigh);
+        ctx.strokeStyle = 'rgba(255, 200, 50, 0.45)';
+        ctx.setLineDash([6, 4]);
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(0, yHigh); ctx.lineTo(w, yHigh); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = 'rgba(255, 200, 50, 0.9)';
+        ctx.font = '11px Consolas';
+        ctx.fillText('HIGH ' + refHigh, 6, yHigh - 4);
+    }
+    if (stackArr.length > 1) {
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = color;
+        stackArr.forEach((val, idx) => {
+            const x = (idx / MAX_STACK_POINTS) * w;
+            const y = yOfVal(val);
+            if (idx === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+        stackArr.forEach((val, idx) => {
+            const x = (idx / MAX_STACK_POINTS) * w;
+            const y = yOfVal(val);
+            let pointColor = color;
+            let pointR = 1.8;
+            if ((refLow !== undefined && val < refLow) || (refHigh !== undefined && val > refHigh)) {
+                pointColor = '#ff3355';
+                pointR = 2.5;
+            }
+            ctx.beginPath();
+            ctx.arc(x, y, pointR, 0, Math.PI * 2);
+            ctx.fillStyle = pointColor;
+            ctx.shadowBlur = 4;
+            ctx.shadowColor = pointColor;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+        });
+        const lastVal = stackArr[stackArr.length - 1];
+        const lastX = ((stackArr.length - 1) / MAX_STACK_POINTS) * w;
+        const lastY = yOfVal(lastVal);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+        ctx.setLineDash([2, 3]);
+        ctx.beginPath();
+        ctx.moveTo(lastX, 0);
+        ctx.lineTo(lastX, h);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        const labelText = lastVal.toString();
+        ctx.font = 'bold 14px Consolas';
+        const labelW = ctx.measureText(labelText).width + 14;
+        const labelH = 22;
+        let labelX = lastX + 8;
+        if (labelX + labelW > w) labelX = lastX - labelW - 8;
+        ctx.fillStyle = 'rgba(5, 0, 10, 0.9)';
+        ctx.fillRect(labelX, lastY - labelH / 2, labelW, labelH);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(labelX, lastY - labelH / 2, labelW, labelH);
+        ctx.fillStyle = '#fff';
+        ctx.fillText(labelText, labelX + 7, lastY + 5);
+    }
+}
+renderPointClouds();
+
+const timelineFlow = document.getElementById("timeline-flow");
+function appendToTimeline(text, isAlarm = false, timestamp = null) {
+    const t = timestamp ? new Date(timestamp) : new Date();
+    const timeStr = t.toTimeString().split(' ')[0];
+    const dateStr = t.toLocaleDateString();
+    const displayStr = (timestamp ? dateStr + ' ' : "") + timeStr;
+    const li = document.createElement("li");
+    li.className = isAlarm ? "timeline-item alarm-node" : "timeline-item";
+    li.innerHTML = '<span class="tl-time">[' + displayStr + ']</span><span class="tl-text">' + text + '</span>';
+    timelineFlow.insertBefore(li, timelineFlow.firstChild);
+    if (timelineFlow.children.length > 200) timelineFlow.removeChild(timelineFlow.lastChild);
+}
+
+function clearTimelineLocal() {
+    timelineFlow.innerHTML = '<li class="timeline-item"><span class="tl-time">系统</span><span class="tl-text">时间轴缓存已清空。</span></li>';
+}
+function switchTab(type) {}
+
+async function refreshDeviceList() {
+    try {
+        const resp = await fetch("/vital/devices");
+        if (!resp.ok) return;
+        const data = await resp.json();
+        connectedDevices = data.devices || [];
+        const selectEl = document.getElementById("device_select");
+        const wasEmpty = selectEl.innerHTML.includes("选择设备");
+        const currentVal = selectEl.value;
+        selectEl.innerHTML = '<option value="">-- 选择设备 (' + connectedDevices.length + ') --</option>';
+        connectedDevices.forEach(dev => {
+            const opt = document.createElement("option");
+            opt.value = dev.id;
+            opt.textContent = dev.label + ' (' + (dev.count || 0) + ' 条记录)';
+            selectEl.appendChild(opt);
+        });
+        if (currentVal && connectedDevices.find(d => d.id === currentVal)) {
+            selectEl.value = currentVal;
+        } else if (connectedDevices.length > 0 && wasEmpty) {
+            selectEl.value = connectedDevices[0].id;
+            currentDeviceId = connectedDevices[0].id;
+        }
+    } catch (e) {
+        consoleDom.innerText += '⚠️ [设备列表] 拉取失败: ' + e.message + '\n';
+    }
+}
+
+function onDeviceSelected() {
+    const val = document.getElementById("device_select").value;
+    currentDeviceId = val;
+    if (val) {
+        document.getElementById("dev_sn").value = val;
+        loadHistoryFromDb(24);
+    }
+}
+
+let audioCtx = null; let lastAlarmTime = 0;
+function playHardwareAlarmBeep() {
+    const now = Date.now(); if (now - lastAlarmTime < 250) return; lastAlarmTime = now;
+    try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let osc = audioCtx.createOscillator(); let gain = audioCtx.createGain();
+        osc.type = 'sawtooth'; osc.frequency.setValueAtTime(950, audioCtx.currentTime);
+        osc.frequency.linearRampToValueAtTime(1350, audioCtx.currentTime + 0.12);
+        gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+    } catch(e){}
+}
+
+/* ========== ✟ 数据监控 & NO SIGNAL 模式（连续 2 次全 0 → 休眠） ✟ ========== */
+let _lastDataAt = Date.now();
+let _noSignalShown = false;
+let _zeroDataCount = 0;              /* 连续全 0 数据次数 */
+let _nsStartTime = null;             /* NO SIGNAL 开始时间 */
+let _wsRetryCount = 0;
+
+function _isAllZero(res) {
+    /* 检查所有生命体征是否都为 0 或缺失（全 0/无数据状态） */
+    const hr = res.hr !== undefined && res.hr !== null ? Number(res.hr) : 0;
+    const spo2 = res.spo2 !== undefined && res.spo2 !== null ? Number(res.spo2) : 0;
+    const rr = res.rr !== undefined && res.rr !== null ? Number(res.rr) : 0;
+    const sys = res.sys !== undefined && res.sys !== null ? Number(res.sys) : 0;
+    const dia = res.dia !== undefined && res.dia !== null ? Number(res.dia) : 0;
+    const map = res.map !== undefined && res.map !== null ? Number(res.map) : 0;
+    /* 至少有一项存在，且全部 ≤ 0 → 视为全 0 数据 */
+    const hasAnyField = (res.hr !== undefined && res.hr !== null)
+        || (res.spo2 !== undefined && res.spo2 !== null)
+        || (res.rr !== undefined && res.rr !== null)
+        || (res.sys !== undefined && res.sys !== null);
+    return hasAnyField && hr <= 0 && spo2 <= 0 && rr <= 0 && sys <= 0 && dia <= 0 && map <= 0;
+}
+
+/* ✟ NO SIGNAL 精神药品名称库 ✟ */
+const _NS_DRUG_NAMES = [
+    { name: "Diazepam 地西泮", color: "#ff00a0" },
+    { name: "Alprazolam 阿普唑仑", color: "#00f0ff" },
+    { name: "Lorazepam 劳拉西泮", color: "#ff88cc" },
+    { name: "Clonazepam 氯硝西泮", color: "#ffaaee" },
+    { name: "Midazolam 咪达唑仑", color: "#ff55aa" },
+    { name: "Zolpidem 唑吡坦", color: "#88ccff" },
+    { name: "Temazepam 替马西泮", color: "#ffdd66" },
+    { name: "Propofol 丙泊酚", color: "#ffffff" },
+    { name: "Fentanyl 芬太尼", color: "#ff66aa" },
+    { name: "Morphine 吗啡", color: "#aaddff" },
+    { name: "Ketamine 氯胺酮", color: "#ffcc88" },
+    { name: "Haloperidol 氟哌啶醇", color: "#ff8888" },
+    { name: "Olanzapine 奥氮平", color: "#88ffcc" },
+    { name: "Risperidone 利培酮", color: "#cc88ff" },
+    { name: "Sertraline 舍曲林", color: "#66ffff" },
+    { name: "Fluoxetine 氟西汀", color: "#ffbbee" },
+    { name: "Venlafaxine 文拉法辛", color: "#ffeeaa" },
+    { name: "Gabapentin 加巴喷丁", color: "#ccffcc" },
+    { name: "Pregabalin 普瑞巴林", color: "#ff99cc" },
+    { name: "Quetiapine 喹硫平", color: "#99ddff" },
+    { name: "Aripiprazole 阿立哌唑", color: "#ffccaa" },
+    { name: "Lithium 锂盐", color: "#ffaadd" },
+    { name: "Valproate 丙戊酸盐", color: "#aaffdd" },
+    { name: "Carbamazepine 卡马西平", color: "#ddbbff" },
+    { name: "Lamotrigine 拉莫三嗪", color: "#ffddcc" },
+    { name: "Chlorpromazine 氯丙嗪", color: "#ccaaff" },
+    { name: "Clozapine 氯氮平", color: "#ffddff" },
+    { name: "Escitalopram 艾司西酞普兰", color: "#bbddff" },
+    { name: "Duloxetine 度洛西汀", color: "#ddffaa" },
+    { name: "Mirtazapine 米氮平", color: "#ffaaaa" },
+    { name: "Bupropion 安非他酮", color: "#aaffaa" },
+    { name: "Trazodone 曲唑酮", color: "#ddccff" },
+    { name: "Buspirone 丁螺环酮", color: "#ccffee" },
+    { name: "Hydroxyzine 羟嗪", color: "#ffeecc" },
+    { name: "氯硝安定", color: "#ff88dd" },
+    { name: "舒乐安定", color: "#88ddff" },
+    { name: "阿普唑仑", color: "#ffccdd" },
+    { name: "利眠宁", color: "#ddffdd" },
+    { name: "三唑仑", color: "#ffbbaa" },
+    { name: "氟硝西泮", color: "#ccddff" }
+];
+
+function _showNoSignal() {
+    if (_noSignalShown) return;
+    _noSignalShown = true;
+    _nsStartTime = Date.now();
+    const nsEl = document.getElementById("angel-nosignal");
+    const glitchEl = document.getElementById("angel-signal-glitch");
+    const nsLastEl = document.getElementById("ns-last-time");
+    if (nsEl) nsEl.classList.add("show");
+    if (glitchEl) glitchEl.classList.remove("show");
+    if (nsLastEl) nsLastEl.textContent = new Date(_lastDataAt).toLocaleString();
+
+    /* ✟ 生成漂浮的精神药品名称 ✟ */
+    const drugsBg = document.getElementById("ns-drugs-bg");
+    if (drugsBg) {
+        drugsBg.innerHTML = "";
+        const frag = document.createDocumentFragment();
+        const count = 28;
+        for (let i = 0; i < count; i++) {
+            const d = _NS_DRUG_NAMES[i % _NS_DRUG_NAMES.length];
+            const el = document.createElement("div");
+            el.className = "ns-drug";
+            el.textContent = d.name;
+            el.style.color = d.color;
+            el.style.left = (Math.random() * 92 + 2) + "%";
+            el.style.top = (Math.random() * 90 + 2) + "%";
+            el.style.animationDuration = (8 + Math.random() * 10).toFixed(1) + "s";
+            el.style.animationDelay = (-Math.random() * 12).toFixed(1) + "s";
+            el.style.fontSize = (10 + Math.random() * 8).toFixed(0) + "px";
+            frag.appendChild(el);
+        }
+        drugsBg.appendChild(frag);
+    }
+
+    /* 播放循环音乐 */
+    const audio = document.getElementById("ns-audio");
+    const btn = document.getElementById("ns-music-btn");
+    if (audio) {
+        try {
+            audio.currentTime = 0;
+            var p = audio.play();
+            if (p && typeof p.catch === "function") p.catch(function () {});
+        } catch (e) {}
+    }
+    if (btn) {
+        btn.textContent = "♪ 暂停音乐";
+        btn.classList.add("playing");
+    }
+}
+
+function _hideNoSignal() {
+    if (!_noSignalShown) return;
+    _noSignalShown = false;
+    _zeroDataCount = 0;
+    const nsEl = document.getElementById("angel-nosignal");
+    const audio = document.getElementById("ns-audio");
+    const btn = document.getElementById("ns-music-btn");
+    if (nsEl) nsEl.classList.remove("show");
+    if (audio) {
+        try { audio.pause(); } catch (e) {}
+    }
+    if (btn) {
+        btn.textContent = "♪ 暂停音乐";
+        btn.classList.remove("playing");
+    }
+}
+
+/* ✟ 手动触发休眠模式（用于暂停监护、测试或临时离岗） ✟ */
+function manualEnterSleep() {
+    if (_noSignalShown) { _hideNoSignal(); consoleDom.innerText += "💤 [手动] 已从休眠模式恢复\n"; consoleDom.scrollTop = consoleDom.scrollHeight; return; }
+    if (confirm("是否手动进入休眠模式？\n\n进入后：\n  • 停止显示体征数据刷新\n  • 播放休眠背景音乐\n  • 点击画面即可恢复\n\n此功能供临时离岗/测试时使用。")) {
+        _showNoSignal();
+        consoleDom.innerText += "💤 [手动] 已进入休眠模式（用户手动触发）\n";
+        consoleDom.scrollTop = consoleDom.scrollHeight;
+    }
+}
+
+function _tickNoSignal() {
+    if (!_noSignalShown || !_nsStartTime) return;
+    const nsTimeEl = document.getElementById("ns-offline-time");
+    if (nsTimeEl) {
+        const gap = Math.floor((Date.now() - _nsStartTime) / 1000);
+        nsTimeEl.textContent = String(gap);
+    }
+}
+setInterval(_tickNoSignal, 1000);
+
+function _feedData(res) {
+    _lastDataAt = Date.now();
+    /* 评估本次数据是否全 0 */
+    if (res && _isAllZero(res)) {
+        _zeroDataCount += 1;
+        if (_zeroDataCount >= 2) {
+            _showNoSignal();
+        }
+    } else if (res) {
+        /* 收到有效数据，重置计数并退出 NO SIGNAL */
+        _zeroDataCount = 0;
+        _hideNoSignal();
+    } else {
+        /* 历史数据成功 → 刷新时间但不影响 NO SIGNAL 判定 */
+        _zeroDataCount = 0;
+    }
+}
+
+/* ========== ✟ NO SIGNAL 点击唤醒 & 音乐控制 ✟ ========== */
+document.addEventListener("DOMContentLoaded", function () {
+    const nsEl = document.getElementById("angel-nosignal");
+    const btn = document.getElementById("ns-music-btn");
+    const audio = document.getElementById("ns-audio");
+
+    if (nsEl) {
+        nsEl.addEventListener("click", function (e) {
+            /* 点击音乐按钮不触发唤醒 */
+            if (e.target && e.target.id === "ns-music-btn") return;
+            if (!_noSignalShown) return;
+            _zeroDataCount = 0;
+            _hideNoSignal();
+            const statusEl = document.getElementById("splash-status");
+            if (statusEl) statusEl.textContent = "♡ 手动唤醒：重新监听监护仪数据流 ♡";
+        });
+    }
+
+    if (btn && audio) {
+        btn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            if (audio.paused) {
+                try {
+                    var p = audio.play();
+                    if (p && typeof p.catch === "function") p.catch(function () {});
+                } catch (err) {}
+                btn.textContent = "♪ 暂停音乐";
+                btn.classList.add("playing");
+            } else {
+                audio.pause();
+                btn.textContent = "♪ 播放音乐";
+                btn.classList.remove("playing");
+            }
+        });
+    }
+    /* ✟ 启动时请求 Windows 通知权限，用于报警时弹窗 ✟ */
+    if (typeof Notification !== "undefined" && Notification.permission === "default") {
+        try {
+            Notification.requestPermission().then(function (p) {
+                if (p === "granted") {
+                    try {
+                        var welcomeN = new Notification("♡ OpenMonitor ♡", {
+                            body: "监护仪连接后，报警将在此通知栏提醒您。",
+                            silent: true
+                        });
+                        setTimeout(function () { try { welcomeN.close(); } catch (e) {} }, 5000);
+                    } catch (err) {}
+                }
+            });
+        } catch (e) {}
+    }
+});
+
+/* ========== ✟ 启动动画（10s 超时兜底 + 语录滚动 + 进度条） ✟ ========== */
+(function startSplashEngine() {
+    const bar = document.getElementById("splash-bar");
+    const statusEl = document.getElementById("splash-status");
+    const countEl = document.getElementById("splash-count");
+    const quotesContainer = document.getElementById("splash-quotes");
+
+    const allQuotes = [
+        { text: "♡ 正在检查监护仪与患者的连接稳定性...", type: "neon" },
+        { text: "✟ 天使酱正在校准粉蓝双色 LED 指示器 ✟", type: "kawaii" },
+        { text: "♡ 正在加载超天酱地雷系 UI 皮肤...", type: "kawaii" },
+        { text: "// 正在建立 HL7/MLLP 遥测通道 //", type: "neon" },
+        { text: "♡ 正在加载精神药品与镇静剂参考数据集...", type: "status" },
+        { text: "// 正在初始化 SpO₂ / NIBP / RR 数据流解析器 //", type: "neon" },
+        { text: "♡ 正在扫描附近的监护仪 MAC 地址...", type: "status" },
+        { text: "✟ 正在校准 ECG 点云颜色映射 ✟", type: "kawaii" },
+        { text: "♡ 正在检查 IPv6 双栈网络可达性...", type: "neon" },
+        { text: "// 正在加载实时报警引擎 + 历史回放模块 //", type: "status" },
+        { text: "♡ 正在注入超天酱地雷系少女字体 ♡", type: "kawaii" },
+        { text: "// 正在同步数据库中最近 24h 体征历史数据 //", type: "neon" },
+        { text: "♡ 正在等待监护仪第一次心跳信号...", type: "status" },
+        { text: "✟ 全部模块加载完毕 —— 随时可以进入主程序 ✟", type: "progress" }
+    ];
+
+    let secLeft = 10;
+    let quoteIdx = 0;
+
+    function updateBar() {
+        if (!bar) return;
+        const pct = Math.min(100, ((10 - secLeft) / 10) * 100);
+        bar.style.width = pct + "%";
+    }
+    function nextQuote() {
+        if (!quotesContainer) return;
+        const children = quotesContainer.querySelectorAll(".splash-quote");
+        if (children.length === 0) return;
+        /* 让第 2 条淡出，第 1 条上移，插入新一条在底部 */
+        for (let i = 0; i < children.length; i++) {
+            children[i].classList.remove("show");
+        }
+        const q = allQuotes[quoteIdx % allQuotes.length];
+        quoteIdx += 1;
+        /* 替换第一条内容 */
+        const first = children[0];
+        first.textContent = q.text;
+        /* 移除所有类型 class，再添加 */
+        first.className = "splash-quote";
+        first.classList.add(q.type);
+        setTimeout(function () {
+            first.classList.add("show");
+        }, 50);
+    }
+
+    updateBar();
+    if (statusEl) statusEl.textContent = "♡ 正在与监护仪进行灵魂通讯 ♡";
+
+    const tickTimer = setInterval(function () {
+        secLeft -= 1;
+        if (secLeft < 0) secLeft = 0;
+        if (countEl) countEl.textContent = String(secLeft);
+        updateBar();
+        if (secLeft === 7 && statusEl) statusEl.textContent = "✟ 正在加载 UI 模块... ✟";
+        if (secLeft === 4 && statusEl) statusEl.textContent = "♡ 正在扫描监护仪数据通道 ♡";
+        if (secLeft === 1 && statusEl) statusEl.textContent = "✟ 即将进入主程序 ✟";
+        if (secLeft <= 0) {
+            clearInterval(tickTimer);
+        }
+    }, 1000);
+
+    nextQuote();
+    const quoteTimer = setInterval(nextQuote, 1800);
+
+    /* 超时兜底 10s 自动进入主程序 */
+    setTimeout(function () {
+        dismissSplash("timeout-fallback");
+    }, 10000);
+
+    /* dismissSplash 实现：淡出启动动画并清理计时器 */
+    window._splashTimers = { tick: tickTimer, quote: quoteTimer };
+})();
+
+function dismissSplash(reason) {
+    const sp = document.getElementById("angel-splash");
+    if (!sp) return;
+    if (sp.classList.contains("hide")) return;
+    /* 关键修复：监护仪连接成功后再等 5 秒才进入主画面，防止动画一闪而过 */
+    if (reason === "websocket-connected" && !window._wsSplashDismissing) {
+        window._wsSplashDismissing = true;
+        var sEl = document.getElementById("splash-status");
+        var cEl = document.getElementById("splash-count");
+        if (sEl) sEl.textContent = "✓ 监护仪已连接，正在完成最后 5 秒初始化... ✟";
+        var wait = 5;
+        if (cEl) cEl.textContent = String(wait);
+        var dt = setInterval(function () {
+            wait -= 1;
+            if (cEl) cEl.textContent = String(wait);
+            if (wait <= 0) { clearInterval(dt); dismissSplash("websocket-connected-5s-done"); }
+        }, 1000);
+        return;
+    }
+    sp.classList.add("hide");
+    if (window.console) {
+        console.log("[Splash] 退出启动动画: " + (reason || "ready"));
+    }
+    if (window._splashTimers) {
+        if (window._splashTimers.tick) clearInterval(window._splashTimers.tick);
+        if (window._splashTimers.quote) clearInterval(window._splashTimers.quote);
+    }
+    setTimeout(function () {
+        if (sp && sp.parentNode) sp.parentNode.removeChild(sp);
+    }, 1400);
+}
+
+/* ========== ✟ WebSocket 连接（兼容 IPv6 方括号 + 自动重连） ✟ ========== */
+let ws = null;
+function _connectWs() {
+    const wsProtocol = window.location.protocol === "https:" ? "wss://" : "ws://";
+    const host = window.location.host || "localhost:8000";
+    /* IPv6 形如 [::1]:8000 / [2408:...]:8000 — 浏览器已处理，无需额外处理 */
+    const url = wsProtocol + host + "/ws";
+    try {
+        ws = new WebSocket(url);
+    } catch (e) {
+        /* 兜底：用 127.0.0.1 直接重试 */
+        ws = new WebSocket("ws://127.0.0.1:8000/ws");
+    }
+
+    ws.onopen = function () {
+        _wsRetryCount = 0;
+        consoleDom.innerText += "🟢 [WebSocket] 医疗全通道接入成功。自适应点云与控制台全量流解析线程已就绪！\n";
+        dismissSplash("websocket-connected");
+        refreshDeviceList();
+        loadHistoryFromDb(24);
+    };
+
+    ws.onclose = function () {
+        _wsRetryCount += 1;
+        consoleDom.innerText += "🟡 [WebSocket] 连接已断开，第 " + _wsRetryCount + " 次尝试重连...\n";
+        consoleDom.scrollTop = consoleDom.scrollHeight;
+        /* 重连 */
+        setTimeout(function () {
+            try { _connectWs(); } catch (e) { /* ignore */ }
+        }, Math.min(500 * _wsRetryCount, 4000));
+    };
+
+    ws.onerror = function (e) {
+        consoleDom.innerText += "🔴 [WebSocket] 传输层异常。正在自动重建双栈通道...\n";
+        consoleDom.scrollTop = consoleDom.scrollHeight;
+    };
+
+    /* ========== 消息处理器（每次重连后都正确绑定） ========== */
+    ws.onmessage = function (event) {
+        const res = JSON.parse(event.data);
+        _feedData(res); /* ✟ 传入本次数据评估是否全 0 ✟ */
+        const nowTimeStr = new Date().toTimeString().split(' ')[0];
+
+        if (res.type === "alarm_stream") {
+            handleIncomingAlarm(res.alarm_text);
+            const info = analyzeAlarmLocal(res.alarm_text);
+            if (info.severity === "P0" || info.severity === "P1") {
+                triggerSystemAlarm(res.alarm_text);
+            }
+            return;
+        }
+
+        if (res.type === "data_stream") {
+            const incomingDevice = res.sn || res.device_id || "";
+            if (currentDeviceId && incomingDevice && incomingDevice !== currentDeviceId) {
+                return;
+            }
+            if (res.sn) document.getElementById("dev_sn").value = res.sn;
+            if (res.sn && !connectedDevices.find(d => d.id === res.sn)) {
+                refreshDeviceList();
+            }
+
+            let hasNewMetrics = false;
+            let vitalSnap = [];
+            let parsedLogItems = [];
+
+            if (res.hr !== undefined && res.hr !== null) {
+                document.getElementById("v_hr").innerText = res.hr;
+                vitalSnap.push('HR: ' + res.hr);
+                if (res.hr > 0) parsedLogItems.push('💚 心率: ' + res.hr + ' bpm');
+                hasNewMetrics = true;
+            }
+            if (res.spo2 !== undefined && res.spo2 !== null) {
+                document.getElementById("v_spo2").innerText = res.spo2;
+                vitalSnap.push('SpO₂: ' + res.spo2 + '%');
+                if (res.spo2 > 0) parsedLogItems.push('💙 血氧: ' + res.spo2 + ' %');
+                hasNewMetrics = true;
+            }
+            if (res.rr !== undefined && res.rr !== null) {
+                document.getElementById("v_rr").innerText = res.rr;
+                vitalSnap.push('RR: ' + res.rr);
+                if (res.rr > 0) parsedLogItems.push('🧡 呼吸率: ' + res.rr + ' rpm');
+                hasNewMetrics = true;
+            }
+
+            if (res.sys !== undefined && res.sys !== null && res.sys > 0) {
+                const bpStr = res.sys + '/' + res.dia;
+                document.getElementById("v_bp").innerText = bpStr;
+                parsedLogItems.push('🩺 血压: ' + bpStr + ' mmHg (MAP: ' + (res.map || 0) + ')');
+                if (bpStr !== lastBPString) {
+                    lastBPString = bpStr;
+                    appendToTimeline('🩺 NIBP 血压新测定值: ' + bpStr + ' mmHg (MAP: ' + res.map + ')');
+                }
+            }
+
+            if (parsedLogItems.length > 0) {
+                consoleDom.innerText += '🧬 [' + nowTimeStr + '][2575] ' + parsedLogItems.join(' | ') + '\n';
+            }
+            if (res.raw_log) {
+                consoleDom.innerText += '📦 [HL7] ' + res.raw_log + '\n';
+            }
+            if (consoleDom.innerText.length > 60000) {
+                consoleDom.innerText = '† [日志清理] 留存最新追踪记录... \n' + consoleDom.innerText.substring(30000);
+            }
+            consoleDom.scrollTop = consoleDom.scrollHeight;
+
+            if (hasNewMetrics) {
+                if (res.hr > 0) {
+                    hrStackPoints.push(res.hr);
+                    if (hrStackPoints.length > MAX_STACK_POINTS) hrStackPoints.shift();
+                }
+                if (res.spo2 > 0) {
+                    spo2StackPoints.push(res.spo2);
+                    if (spo2StackPoints.length > MAX_STACK_POINTS) spo2StackPoints.shift();
+                }
+                if (res.rr > 0) {
+                    rrStackPoints.push(res.rr);
+                    if (rrStackPoints.length > MAX_STACK_POINTS) rrStackPoints.shift();
+                }
+                if (Math.random() < 0.08) {
+                    appendToTimeline('🧬 实时 -> ' + vitalSnap.join(' | '));
+                }
+            }
+        }
+    };
+    return ws;
+}
+
+/* ========== ✟ 药品名称扩散动画 ✟ ========== */
+(function generateDrugClouds() {
+    const drugs = [
+        "Diazepam", "Alprazolam", "Lorazepam", "Clonazepam",
+        "Midazolam", "Zolpidem", "Temazepam", "Oxazepam",
+        "Nitrazepam", "Flunitrazepam", "Propofol", "Fentanyl",
+        "Morphine", "Ketamine", "Haloperidol", "Olanzapine",
+        "Risperidone", "Quetiapine", "Aripiprazole", "Clozapine",
+        "Ziprasidone", "Sertraline", "Fluoxetine", "Escitalopram",
+        "Venlafaxine", "Bupropion", "Mirtazapine", "Trazodone",
+        "Amitriptyline", "Gabapentin", "Pregabalin", "Lamotrigine",
+        "Carbamazepine", "Phenytoin", "Levetiracetam", "Valproate",
+        "地西泮", "阿普唑仑", "氯硝西泮", "咪达唑仑",
+        "丙泊酚", "芬太尼", "吗啡", "氯胺酮",
+        "氟哌啶醇", "奥氮平", "利培酮", "喹硫平",
+        "舍曲林", "氟西汀", "文拉法辛", "米氮平",
+        "曲唑酮", "加巴喷丁", "普瑞巴林", "拉莫三嗪",
+        "卡马西平", "丙戊酸钠", "左乙拉西坦", "苯妥英钠",
+        "♡ Trankotrazine", "✟ Sedative-X", "✝ Angel-Pill",
+        "♡ Benzodiazepine", "✟ Opioid-Agent", "✝ Neuroleptic",
+        "Citalopram", "Paroxetine", "Fluvoxamine", "Duloxetine",
+        "Chlorpromazine", "Thioridazine", "Fluphenazine",
+        "Loxapine", "Molindone", "Perphenazine", "Thiothixene"
+    ];
+    const colors = [
+        "#ff00a0", "#ff88cc", "#00f0ff", "#88aaff",
+        "#ffffff", "#cc99ff", "#ffaaee", "#66ccff",
+        "#ff6699", "#aaaaff", "#ffccff", "#00ccff"
+    ];
+    const container = document.getElementById("splash-drugs-bg");
+    if (!container) return;
+    const count = 80;
+    const frag = document.createDocumentFragment();
+    for (let i = 0; i < count; i++) {
+        const s = document.createElement("span");
+        s.className = "splash-drug";
+        s.textContent = drugs[i % drugs.length];
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        s.style.color = color;
+        s.style.left = (Math.random() * 110 - 5) + "%";
+        s.style.top = (60 + Math.random() * 50) + "%";
+        const size = 10 + Math.random() * 26;
+        s.style.fontSize = size + "px";
+        s.style.setProperty("--dur", (6 + Math.random() * 8).toFixed(1) + "s");
+        s.style.setProperty("--delay", (Math.random() * 6).toFixed(1) + "s");
+        s.style.setProperty("--dx", ((Math.random() - 0.5) * 300).toFixed(0) + "px");
+        s.style.setProperty("--maxop", (0.12 + Math.random() * 0.28).toFixed(2));
+        s.style.animationDuration = (6 + Math.random() * 8).toFixed(1) + "s";
+        frag.appendChild(s);
+    }
+    container.appendChild(frag);
+})();
+
+const consoleDom = document.getElementById("console-log");
+_connectWs();
+
+let lastBPString = "";
+
+const SEVERITY_LABEL = {"P0":"🚨 致命","P1":"🔥 紧急","P2":"⚠️ 关注","P3":"ℹ️ 提示"};
+function analyzeAlarmLocal(text) {
+    const rules = [
+        [[/停搏|ASYS|asystole/i], "心率异常", "P0", "⚠️ 心脏停搏！立即抢救"],
+        [[/室颤|VF|ventricular/i], "心率异常", "P0", "⚠️ 心室颤动，致命心律"],
+        [[/窒息|APNEA|apnea/i], "呼吸异常", "P0", "⚠️ 呼吸暂停/窒息！"],
+        [[/心动过速|TACHY|tachy|HR\s*HIGH|心率高/i], "心率异常", "P1", "心率过速（HR > 100）"],
+        [[/心动过缓|BRADY|brady|HR\s*LOW|心率低/i], "心率异常", "P1", "心率过缓（HR < 60）"],
+        [[/SpO2\s*LOW|SPO2\s*LOW|血氧低|低氧|hypoxia/i], "血氧异常", "P1", "血氧过低（SpO2 < 90%）"],
+        [[/SYS\s*HIGH|收缩压高|血压高|hypertension/i], "血压异常", "P1", "收缩压过高（SYS > 160）"],
+        [[/SYS\s*LOW|收缩压低|血压低|hypotension/i], "血压异常", "P1", "收缩压过低（SYS < 90）"],
+        [[/RESP\s*HIGH|RR\s*HIGH|呼吸急促|tachypnea/i], "呼吸异常", "P1", "呼吸过速（RR > 25）"],
+        [[/RESP\s*LOW|RR\s*LOW|呼吸过缓|bradypnea/i], "呼吸异常", "P1", "呼吸过缓（RR < 10）"],
+        [[/TEMP\s*HIGH|体温高|发热|fever/i], "体温异常", "P2", "体温过高（T > 38.5℃）"],
+        [[/TEMP\s*LOW|体温低|hypothermia/i], "体温异常", "P2", "体温过低（T < 36℃）"],
+        [[/心律失常|arrhythmia|irregular/i], "心率异常", "P2", "心律不规则，需关注"],
+        [[/探头脱落|LEAD\s*OFF|lead\s*off|电极脱落|脱落/i], "设备连接", "P2", "电极/探头脱落，检查导联"],
+        [[/信号丢失|no\s*signal|信号弱/i], "设备连接", "P3", "信号异常，检查设备连接"],
+        [[/电量低|battery\s*low|BATTERY/i], "设备连接", "P3", "监护仪电量不足"],
+    ];
+    for (const [patterns, cat, sev, hint] of rules) {
+        if (patterns.some(p => p.test(text || ""))) return { category: cat, severity: sev, hint };
+    }
+    return { category: "其他报警", severity: "P3", hint: "未分类报警：" + (text || "—") };
+}
+
+async function loadHistoryFromDb(hours) {
+    const statusEl = document.getElementById("history-status");
+    try {
+        statusEl.innerText = '正在拉取近 ' + hours + 'h 历史...';
+        const sn = document.getElementById("dev_sn").value;
+        let deviceId = (sn && !sn.startsWith("--")) ? sn : null;
+
+        const vResp = await fetch('/vital/history?hours=' + hours + '&limit=' + (MAX_STACK_POINTS * 3) + (deviceId ? '&device_id=' + encodeURIComponent(deviceId) : ''));
+        const aResp = await fetch('/vital/alerts?hours=' + hours + (deviceId ? '&device_id=' + encodeURIComponent(deviceId) : ''));
+        const vData = await vResp.json();
+        const aData = await aResp.json();
+
+        if (!deviceId && vData.length > 0) deviceId = vData[vData.length - 1].device_id;
+
+        const filtered = deviceId ? vData.filter(v => v.device_id === deviceId) : vData;
+        if (filtered.length > 0) {
+            const recent = filtered.slice(-MAX_STACK_POINTS);
+            hrStackPoints = recent.map(v => v.hr).filter(v => v > 0);
+            spo2StackPoints = recent.map(v => v.spo2).filter(v => v > 0);
+            rrStackPoints = recent.map(v => v.rr).filter(v => v > 0);
+            const last = filtered[filtered.length - 1];
+            if (last.hr) document.getElementById("v_hr").innerText = last.hr;
+            if (last.spo2) document.getElementById("v_spo2").innerText = last.spo2;
+            if (last.rr) document.getElementById("v_rr").innerText = last.rr;
+            if (last.sys && last.sys > 0) {
+                document.getElementById("v_bp").innerText = last.sys + '/' + (last.dia || 0);
+            }
+            if (last.device_id) document.getElementById("dev_sn").value = last.device_id;
+        }
+
+        aData.forEach(a => {
+            const info = analyzeAlarmLocal(a.alarm_text);
+            let line = (SEVERITY_LABEL[info.severity] || info.severity) + ' [' + info.category + '] ' + info.hint;
+            if (info.severity === "P3" && info.category === "其他报警") {
+                line += '  — 原文: "' + (a.alarm_text || "—") + '"';
+            }
+            appendToTimeline(line, info.severity === "P0" || info.severity === "P1", a.time);
+            consoleDom.innerText += '📡 [报警归档] ' + a.time + ' ' + line + '\n';
+        });
+
+        if (deviceId) {
+            fetch('/vital/patient?device_id=' + encodeURIComponent(deviceId))
+                .then(r => r.json())
+                .then(p => {
+                    if (p.patient_name) document.getElementById("p_name").value = p.patient_name;
+                    if (p.gender) document.getElementById("p_gender").value = p.gender;
+                    if (p.age) document.getElementById("p_age").value = p.age;
+                    if (p.hospital) document.getElementById("p_hospital").value = p.hospital;
+                    if (p.department) document.getElementById("p_dept").value = p.department;
+                    if (p.bed_id) document.getElementById("p_bed").value = p.bed_id;
+                    if (p.id_card) document.getElementById("p_idcard").value = p.id_card;
+                    if (p.phone) document.getElementById("p_phone").value = p.phone;
+                    if (p.diagnosis) document.getElementById("p_diagnosis").value = p.diagnosis;
+                    if (p.admission_time) document.getElementById("p_admission").value = p.admission_time;
+                    if (p.doctor) document.getElementById("p_doctor").value = p.doctor;
+                    if (p.note) document.getElementById("p_note").value = p.note;
+                    consoleDom.innerText += '👤 [患者档案] ' + (p.patient_name || '—') + ' ' + (p.gender || '') + ' ' + (p.age ? p.age + '岁' : '') + ' ' + (p.hospital || '') + ' ' + (p.department || '') + ' ' + (p.bed_id || '') + '\n';
+                    consoleDom.scrollTop = consoleDom.scrollHeight;
+                });
+        }
+
+        consoleDom.innerText += '📚 [DB 历史回填] 体征 ' + filtered.length + ' 条 / 报警 ' + aData.length + ' 条 (近' + hours + 'h)\n';
+        consoleDom.scrollTop = consoleDom.scrollHeight;
+        statusEl.innerText = '历史同步完成：体征 ' + filtered.length + ' 条 / 报警 ' + aData.length + ' 条';
+        statusEl.style.color = "#00f0ff";
+        _feedData(); /* ✟ 历史数据成功拉取 → 刷新 NO SIGNAL 计时器 ✟ */
+    } catch (e) {
+        statusEl.innerText = "⚠️ 历史拉取失败: " + e.message;
+        statusEl.style.color = "#ff3355";
+    }
+}
+
+function copyPatientInfo() {
+    const name = document.getElementById("p_name").value;
+    const gender = document.getElementById("p_gender").value;
+    const age = document.getElementById("p_age").value;
+    const dept = document.getElementById("p_dept").value;
+    const bed = document.getElementById("p_bed").value;
+    const doctor = document.getElementById("p_doctor").value;
+    const diagnosis = document.getElementById("p_diagnosis").value;
+    const sn = document.getElementById("dev_sn").value;
+    const hr = document.getElementById("v_hr").innerText;
+    const spo2 = document.getElementById("v_spo2").innerText;
+    const rr = document.getElementById("v_rr").innerText;
+    const bp = document.getElementById("v_bp").innerText;
+
+    const copyText =
+        "【实时患者体征档案快照】\n" +
+        "━━━━━━━━━━━━━━━━━━━━━━\n" +
+        "设备编号 : " + sn + "\n" +
+        "患者姓名 : " + (name || "—") + "\n" +
+        "性别年龄 : " + (gender || "—") + " / " + (age || "—") + " 岁\n" +
+        "科室床位 : " + (dept || "—") + " / " + (bed || "—") + "\n" +
+        "主管医生 : " + (doctor || "—") + "\n" +
+        "诊断主诉 : " + (diagnosis || "—") + "\n" +
+        "━━━━━━━━━━━━━━━━━━━━━━\n" +
+        "当前生命体征:\n" +
+        "  心率 HR   : " + hr + " bpm\n" +
+        "  血氧 SpO2 : " + spo2 + " %\n" +
+        "  呼吸率 RR : " + rr + " rpm\n" +
+        "  血压 NIBP : " + bp + " mmHg\n" +
+        "━━━━━━━━━━━━━━━━━━━━━━\n" +
+        "采集时间 : " + new Date().toLocaleString();
+    navigator.clipboard.writeText(copyText).then(
+        () => { alert("✅ 患者档案已完美抓取至剪贴板！"); },
+        () => { alert("⚠️ 复制失败，请手动选择"); }
+    );
+}
+
+function exportVitalsCsv() {
+    const sn = document.getElementById("dev_sn").value;
+    const deviceId = (sn && !sn.startsWith("--")) ? sn : "";
+    const url = deviceId ? '/vital/export.csv?device_id=' + encodeURIComponent(deviceId) + '&hours=24' : '/vital/export.csv?hours=24';
+    window.open(url, "_blank");
+}
+
+async function archiveBingli() {
+    const sn = document.getElementById("dev_sn").value;
+    const deviceId = (sn && !sn.startsWith("--")) ? sn : null;
+    if (!deviceId) { alert("⚠️ 监护仪尚未接入，暂无法归档"); return; }
+    const statusEl = document.getElementById("history-status");
+    statusEl.innerText = "📂 正在归档病历到 data/bingli/ ...";
+    statusEl.style.color = "#ffcc00";
+    try {
+        const resp = await fetch('/vital/archive?device_id=' + encodeURIComponent(deviceId) + '&hours=24', { method: "POST" });
+        const data = await resp.json();
+        if (data.ok) {
+            statusEl.innerText = "✅ 已归档 " + data.vital_count + " 条体征 → " + data.archive_dir;
+            statusEl.style.color = "#00ff66";
+            consoleDom.innerText += "📂 [病历归档] 报告: " + data.report_file + "\n";
+            consoleDom.innerText += "📂 [病历归档] CSV: " + data.csv_file + "\n";
+            consoleDom.scrollTop = consoleDom.scrollHeight;
+            alert("✅ 病历已成功归档到 data/bingli/ 文件夹！");
+        } else {
+            statusEl.innerText = "⚠️ 归档失败";
+            statusEl.style.color = "#ff3355";
+        }
+    } catch (e) {
+        statusEl.innerText = "⚠️ 归档失败: " + e.message;
+        statusEl.style.color = "#ff3355";
+    }
+}
+
+function handleIncomingAlarm(alarmText) {
+    const info = analyzeAlarmLocal(alarmText);
+    const deep = analyzeAlarmDeep(alarmText);
+    let line = (SEVERITY_LABEL[info.severity] || info.severity) + " [" + deep.metric + "] " + (deep.cause.length > 30 ? deep.cause.substring(0, 30) + "..." : deep.cause);
+    if (deep.severity === "P3" && deep.category === "其他报警") {
+        line += '  — 原文: "' + (alarmText || "—") + '"';
+    }
+    appendToTimeline(line, info.severity === "P0" || info.severity === "P1");
+    consoleDom.innerText += "🚨 [实时报警·" + deep.severity + "] " + deep.metric + "｜" + (deep.cause.length > 60 ? deep.cause.substring(0, 60) + "..." : deep.cause) + " (原文: " + alarmText + ")\n";
+    consoleDom.scrollTop = consoleDom.scrollHeight;
+    if (deep.severity === "P0" || deep.severity === "P1") { showAngelAlarmModal(alarmText, deep); } else { showAngelAlarmToast(alarmText, deep); }
+}
+let alarmActiveTimer = null, toastTimer = null;
+function showAngelAlarmModal(alarmText, deepInfo) {
+    document.body.classList.add("alarm-active"); playHardwareAlarmBeep();
+    if (alarmActiveTimer) clearTimeout(alarmActiveTimer);
+    alarmActiveTimer = setTimeout(function() { document.body.classList.remove("alarm-active"); }, 8000);
+    const modal = document.getElementById("angel-alarm-modal"); if (!modal) return;
+    document.getElementById("alarm-severity-display").innerHTML = '<span class="alarm-severity-badge severity-' + deepInfo.severity + '">' + (SEVERITY_LABEL[deepInfo.severity] || deepInfo.severity) + ' ' + deepInfo.severity + '</span>';
+    document.getElementById("alarm-title-display").innerText = "† " + deepInfo.metric + " 异常 †";
+    const col = deepInfo.severity === "P0" ? "#ff1155" : deepInfo.severity === "P1" ? "#ffaa00" : deepInfo.severity === "P2" ? "#ffdd00" : "#00f0ff";
+    document.getElementById("alarm-analysis-display").style.color = col;
+    document.getElementById("aam-metric").innerHTML = deepInfo.metric + ' <span style="color:#aaa;font-size:12px;">[' + deepInfo.category + ']</span>';
+    document.getElementById("aam-value").innerHTML = '<span class="danger">' + deepInfo.value + '</span>';
+    document.getElementById("aam-range").innerText = deepInfo.range;
+    document.getElementById("aam-cause").innerText = deepInfo.cause;
+    document.getElementById("aam-action").innerText = deepInfo.action;
+    document.getElementById("alarm-raw-display").innerText = "【原始报警原文】 " + (alarmText || "—");
+    modal.classList.add("show");
+}
+function showAngelAlarmToast(alarmText, deepInfo) {
+    const toast = document.getElementById("angel-alarm-toast"); if (!toast) return;
+    document.getElementById("toast-header").innerHTML = "♡ " + (SEVERITY_LABEL[deepInfo.severity] || deepInfo.severity) + " · " + deepInfo.metric;
+    document.getElementById("toast-header").style.color = deepInfo.severity === "P2" ? "#ffdd00" : "#00f0ff";
+    let body = deepInfo.cause.length > 60 ? deepInfo.cause.substring(0, 60) + "..." : deepInfo.cause;
+    if (deepInfo.severity === "P3" && deepInfo.category === "其他报警") {
+        body += '\n⚠ 原文: "' + (alarmText || "—") + '"';
+    }
+    document.getElementById("toast-body").innerText = body;
+    toast.style.borderColor = deepInfo.severity === "P2" ? "#ffdd00" : "#00f0ff";
+    toast.style.boxShadow = "4px 4px 0 #ff00a0, 0 0 20px " + (deepInfo.severity === "P2" ? "rgba(255,221,0,0.5)" : "rgba(0,240,255,0.5)");
+    toast.classList.add("show");
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function() { toast.classList.remove("show"); }, 7000);
+    /* ✟ 所有级别报警都触发 Windows 通知栏提醒 ✟ */
+    _fireWindowsNotification(alarmText, deepInfo);
+}
+function dismissAngelAlarm() { const modal = document.getElementById("angel-alarm-modal"); if (modal) modal.classList.remove("show"); document.body.classList.remove("alarm-active"); }
+const ALARM_RULES_ADVANCED = [
+    { patterns: [/停搏|ASYS|asystole/i], metric: "心率 HR", category: "心率异常", severity: "P0", range: "应 > 60 bpm", value: "≈ 0 / 无搏动", cause: "心电活动消失，心脏骤停；可能原因：大面积心梗、电机械分离、严重缺氧、高钾血症", action: "立即呼叫急救！开始胸外按压(100-120次/分) + 准备除颤仪 + 肾上腺素静推 + 检查气道通气" },
+    { patterns: [/室颤|VF\b|ventricular.*fibr|VFIB/i], metric: "心律 ECG", category: "心率异常", severity: "P0", range: "应为窦性节律", value: "心室颤动 / 无脉室速", cause: "心室肌乱颤，无有效泵血；触发：心梗、低血钾、药物中毒、长QT综合征", action: "立即除颤（双相200J）！CPR + 肾上腺素 1mg/3-5min + 胺碘酮 300mg 静推" },
+    { patterns: [/心动过速|TACHY|HR\s*HIGH|心率高/i], metric: "心率 HR", category: "心率异常", severity: "P1", range: "正常 60-100 bpm", value: "> 100 bpm（快速）", cause: "窦性心动过速(发热/失血/心衰/焦虑)；房速/房颤；室上速；甲亢危象", action: "评估血压/氧饱和度；查心电图定位；有症状需准备腺苷/胺碘酮" },
+    { patterns: [/心动过缓|BRADY|HR\s*LOW|心率低/i], metric: "心率 HR", category: "心率异常", severity: "P1", range: "正常 60-100 bpm", value: "< 60 bpm（过缓）", cause: "窦性心动过缓(运动员/睡眠)；病态窦房结；β受体阻滞剂过量；甲减", action: "有症状(头晕/低血压/胸痛)：阿托品 0.5mg 静推；准备临时起搏器" },
+    { patterns: [/SpO2\s*LOW|SPO2\s*LOW|血氧低|低氧|hypoxia/i], metric: "血氧 SpO2", category: "血氧异常", severity: "P1", range: "正常 95-100%", value: "< 90%（显著低氧）", cause: "急性低氧血症原因：肺炎/肺水肿/肺栓塞/气胸/ARDS", action: "立即提高吸氧浓度至5-10L/min；听诊双肺；查动脉血气(ABG)；准备无创/有创通气" },
+    { patterns: [/SYS\s*HIGH|收缩压高|血压高|hypertension/i], metric: "收缩压 SYS", category: "血压异常", severity: "P1", range: "正常 90-140 mmHg", value: "> 160 mmHg（高血压危象）", cause: "原发性高血压失控；嗜铬细胞瘤；子痫前期；主动脉夹层", action: "休息 5 分钟复测；伴胸痛/头痛 → 立即拉贝洛尔/尼卡地平静脉降压" },
+    { patterns: [/SYS\s*LOW|收缩压低|血压低|hypotension|休克/i], metric: "收缩压 SYS", category: "血压异常", severity: "P1", range: "正常 90-140 mmHg", value: "< 90 mmHg（低血压/休克）", cause: "休克分型：低容量(失血/脱水)、心源性(心梗/心衰)、分布性(脓毒症/过敏)、梗阻性(心包填塞)", action: "立即平卧抬高下肢；快速补液(生理盐水/胶体)；查血红蛋白/乳酸；准备血管活性药" },
+    { patterns: [/RESP\s*HIGH|RR\s*HIGH|呼吸急促|tachypnea/i], metric: "呼吸 RR", category: "呼吸异常", severity: "P1", range: "正常 12-20 rpm", value: "> 25 rpm（呼吸急促）", cause: "呼吸驱动增强：低氧血症、代谢性酸中毒(糖尿病酮症/尿毒症)、焦虑/疼痛", action: "评估氧合(SpO2/ABG)；听双肺；焦虑过度通气 → 纸袋呼吸" },
+    { patterns: [/TEMP\s*HIGH|体温高|发热|fever/i], metric: "体温 T", category: "体温异常", severity: "P2", range: "正常 36.0-37.3 ℃", value: "> 38.5 ℃（发热）", cause: "感染性发热(细菌/病毒)；非感染性(术后吸收热、DVT、药物热)", action: "物理降温(冰毯/温水擦浴)；对乙酰氨基酚 500mg 口服；查找感染源" },
+    { patterns: [/探头脱落|LEAD\s*OFF|lead\s*off|电极脱落/i], metric: "ECG 导联", category: "设备连接", severity: "P2", range: "电极紧贴皮肤", value: "导联脱落 / 阻抗过高", cause: "患者移动/出汗导致电极接触不良；电极凝胶干燥；导线断裂", action: "重新粘贴电极(按RA/LA/RL/LL/V位置)；必要时用酒精清洁皮肤；更换电极片" },
+    { patterns: [/信号丢失|no\s*signal|信号弱/i], metric: "信号质量", category: "设备连接", severity: "P3", range: "信号良好", value: "信号弱 / 丢失", cause: "SpO2探头遮光不良、患者末梢冰凉/低灌注、电缆损坏", action: "更换探头位置(手指→耳垂)；保暖改善末梢循环；检查线缆" },
+    { patterns: [/电量低|battery\s*low|BATTERY.*LOW/i], metric: "监护仪电池", category: "设备连接", severity: "P3", range: "充足电量", value: "电量不足", cause: "长时间未充电或电池老化", action: "接入交流电源；准备备用监护仪；必要时更换电池" },
+];
+function analyzeAlarmDeep(alarmText) { const text = alarmText || ""; for (const rule of ALARM_RULES_ADVANCED) { if (rule.patterns.some(function(p) { return p.test(text); })) return rule; } return { metric: "未分类指标", category: "其他报警", severity: "P3", range: "—", value: "—", cause: "报警原文不在规则库中，需要人工判断", action: "记录报警、观察患者状态；若反复出现请向维护团队反馈" }; }
+function _fireWindowsNotification(alarmText, deep) {
+    if (typeof Notification === "undefined") return;
+    if (Notification.permission !== "granted") {
+        try { Notification.requestPermission(); } catch (e) {}
+        return;
+    }
+    try {
+        const sevLabel = (deep && deep.severity) ? deep.severity : "报警";
+        const metric = (deep && deep.metric) ? deep.metric : "监护仪";
+        const cause = (deep && deep.cause && deep.cause.length > 5)
+            ? deep.cause.substring(0, 80) + (deep.cause.length > 80 ? "..." : "")
+            : "原始报警原文：" + (alarmText || "—");
+        const title = "♡ [" + sevLabel + "] " + metric + " 异常";
+        const opts = {
+            body: cause,
+            icon: "",
+            tag: "openmonitor-alarm-" + Date.now(),
+            requireInteraction: false,
+            silent: false
+        };
+        var n = new Notification(title, opts);
+        n.onclick = function () {
+            window.focus();
+            n.close();
+        };
+        setTimeout(function () { try { n.close(); } catch (e) {} }, 10000);
+    } catch (err) {}
+}
+
+function triggerSystemAlarm(text) {
+    const deep = analyzeAlarmDeep(text);
+    showAngelAlarmModal(text, deep);
+    _fireWindowsNotification(text, deep);
+}
+</script>
+
+<!-- 底部版权小字样（地雷系，可点击进入彩蛋） -->
+<div style="position:fixed;bottom:6px;left:0;right:0;text-align:center;pointer-events:auto;z-index:999;">
+    <a href="/easter" style="font-family:'Courier New','MS Gothic',monospace;font-size:10px;color:#ff88cc;letter-spacing:2px;text-decoration:none;opacity:0.55;text-shadow:0 0 3px #ff00aa;cursor:pointer;">
+        ♡ © 2025 Angel-chan · 版权归属于末音 · 祝愿末音能从病痛中走出来 ♡
+    </a>
+</div>
+</body>
+</html>

@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>♡ OpenMonitor Admin ♡ 患者档案管理台</title>
+<link rel="icon" href="/img/logo.png" type="image/png">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; overflow: hidden; }
+body {
+    font-family: 'Consolas', 'Microsoft YaHei', 'Courier New', monospace;
+    color: #fff;
+    /* 蒸汽波伪桌面背景：粉紫渐变 + 网格 + 霓虹光 */
+    background:
+        radial-gradient(ellipse at 80% 10%, rgba(255,0,160,0.35), transparent 55%),
+        radial-gradient(ellipse at 15% 85%, rgba(0,240,255,0.3), transparent 55%),
+        linear-gradient(180deg, #2a0055 0%, #4a0077 30%, #7700aa 60%, #ff00a0 90%, #ffee00 100%);
+    background-attachment: fixed;
+    position: relative;
+}
+
+/* ✟ 桌面网格层 ✟ */
+body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+        linear-gradient(rgba(255,0,160,0.15) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,240,255,0.15) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* ✟ 太阳光晕（伪日落） ✟ */
+body::after {
+    content: '';
+    position: fixed; top: 18%; left: 50%; transform: translateX(-50%);
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, #ffee00 0%, #ff66aa 40%, #aa00cc 70%, transparent 85%);
+    border-radius: 50%;
+    box-shadow: 0 0 80px #ff66aa, 0 0 160px #ff00aa;
+    opacity: 0.85;
+    pointer-events: none;
+    z-index: 1;
+}
+body::after {
+    /* 在太阳光上加横线，模拟 vaporwave 切半太阳 */
+    mask-image: repeating-linear-gradient(180deg, #000 0px, #000 8px, transparent 8px, transparent 16px);
+    -webkit-mask-image: repeating-linear-gradient(180deg, #000 0px, #000 8px, transparent 8px, transparent 16px);
+}
+
+/* ✟ 内容层（桌面窗口） ✟ */
+.desktop-layer {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    height: calc(100% - 44px);
+    padding: 30px;
+    overflow-y: auto;
+}
+
+/* ✟ 桌面图标（左栏快捷方式） ✟ */
+.desktop-icons {
+    position: fixed; left: 20px; top: 30px; z-index: 20;
+    display: flex; flex-direction: column; gap: 22px;
+}
+.dt-icon {
+    width: 68px; text-align: center; cursor: pointer;
+    color: #fff; font-size: 11px;
+    text-shadow: 2px 2px 0 #000, 0 0 12px rgba(255,0,160,0.8);
+    transition: transform 0.15s ease;
+    line-height: 1.3;
+}
+.dt-icon:hover { transform: scale(1.08); }
+.dt-icon .emoji {
+    display: block;
+    font-size: 36px; line-height: 1;
+    margin-bottom: 5px;
+    filter: drop-shadow(0 0 8px #ff88cc);
+}
+
+/* ✟ 顶部栏（伪窗口标题+状态） ✟ */
+.topbar {
+    display: flex; align-items: center; gap: 16px;
+    max-width: 1100px; margin: 0 auto 20px auto;
+    padding: 12px 18px;
+    background: linear-gradient(90deg, rgba(26,0,51,0.92), rgba(74,0,119,0.88));
+    border: 2px solid #ff00a0;
+    box-shadow: 0 0 0 2px #000, 6px 6px 0 #00f0ff, 0 0 30px rgba(255,0,160,0.4);
+}
+.topbar h1 {
+    font-size: 20px; letter-spacing: 3px; color: #fff;
+    text-shadow: 3px 3px 0 #ff00a0, 0 0 12px #ff66aa;
+}
+.topbar .subtitle { font-size: 12px; color: #88ccff; letter-spacing: 2px; margin-left: auto; }
+.back-btn {
+    padding: 8px 18px; font-size: 12px; letter-spacing: 2px;
+    background: #0b0014; border: 2px solid #00f0ff; color: #00f0ff; cursor: pointer;
+    font-family: inherit; font-weight: bold;
+    box-shadow: 3px 3px 0 #ff00a0;
+    text-decoration: none; display: inline-block;
+}
+.back-btn:hover { background: #00f0ff; color: #000; }
+
+/* ✟ 窗口（伪 Win95 风格面板） ✟ */
+.window {
+    max-width: 1100px; margin: 0 auto 24px auto;
+    background: linear-gradient(180deg, rgba(26,0,51,0.96), rgba(42,0,85,0.96));
+    border: 3px solid #ff00a0;
+    box-shadow: 0 0 0 2px #000, 8px 8px 0 #00f0ff, 0 0 40px rgba(0,240,255,0.25);
+}
+.win-titlebar {
+    background: linear-gradient(90deg, #ff00a0 0%, #7700aa 50%, #00f0ff 100%);
+    padding: 6px 10px; display: flex; align-items: center; gap: 10px;
+    border-bottom: 2px solid #000;
+}
+.win-titlebar .win-title {
+    font-size: 13px; font-weight: bold; letter-spacing: 3px;
+    color: #fff; text-shadow: 1px 1px 0 #000;
+    flex: 1;
+}
+.win-titlebar .win-btn {
+    width: 18px; height: 18px;
+    background: #1a0033; border: 2px solid #fff;
+    color: #fff; font-size: 11px; line-height: 14px;
+    text-align: center; cursor: pointer; font-weight: bold;
+}
+.win-titlebar .win-btn:hover { background: #ff00a0; }
+
+.win-body { padding: 20px; }
+
+/* ✟ 表单元素 ✟ */
+.form-row { display: flex; gap: 14px; margin-bottom: 14px; flex-wrap: wrap; }
+.form-group { flex: 1; min-width: 180px; }
+.form-group label {
+    display: block; font-size: 12px; color: #ff88cc;
+    margin-bottom: 5px; letter-spacing: 2px; font-weight: bold;
+    text-shadow: 0 0 8px rgba(255,0,160,0.5);
+}
+.form-group input, .form-group select, .form-group textarea {
+    width: 100%; background: #0a0022;
+    border: 2px solid #00f0ff; color: #fff;
+    padding: 8px 10px; font-size: 13px;
+    font-family: inherit; letter-spacing: 1px;
+    outline: none; transition: all 0.15s ease;
+    box-shadow: inset 0 0 8px rgba(0,240,255,0.2);
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    border-color: #ff00a0;
+    box-shadow: 0 0 0 2px #ff00a0, inset 0 0 8px rgba(255,0,160,0.3);
+}
+.form-group input[readonly] { background: #111; border-color: #555; color: #888; cursor: not-allowed; }
+
+.device-select {
+    width: 100%; background: #0a0022; border: 2px solid #00f0ff;
+    color: #00f0ff; padding: 12px; font-size: 14px;
+    font-weight: bold; letter-spacing: 2px;
+    font-family: inherit; cursor: pointer; margin-bottom: 15px;
+    text-shadow: 0 0 8px rgba(0,240,255,0.5);
+}
+
+.btn {
+    background: linear-gradient(90deg, #ff00a0, #aa00cc);
+    border: 2px solid #fff; color: #fff;
+    padding: 10px 22px; cursor: pointer; font-weight: bold;
+    font-size: 13px; letter-spacing: 2px;
+    box-shadow: 3px 3px 0 #00f0ff, 0 0 12px rgba(255,0,160,0.5);
+    font-family: inherit;
+}
+.btn:hover { background: linear-gradient(90deg, #00f0ff, #aa00cc); color: #fff; }
+.btn-secondary {
+    background: #2b0055; border: 2px solid #88ffcc; color: #88ffcc;
+    box-shadow: 3px 3px 0 #ff66aa;
+}
+.btn-secondary:hover { background: #88ffcc; color: #000; }
+
+.status { margin-top: 15px; font-size: 13px; font-weight: bold; letter-spacing: 1px; }
+.hint { font-size: 11px; color: #88ccff; margin-top: 6px; letter-spacing: 1px; }
+
+/* ✟ 底部任务栏 ✟ */
+.taskbar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    height: 44px; z-index: 100;
+    background: linear-gradient(180deg, #1a0033 0%, #0a0014 100%);
+    border-top: 3px solid #ff00a0;
+    box-shadow: 0 -4px 0 #00f0ff, 0 -10px 20px rgba(255,0,160,0.3);
+    display: flex; align-items: center; padding: 0 12px; gap: 10px;
+}
+.start-btn {
+    background: linear-gradient(90deg, #ff00a0, #aa00cc);
+    color: #fff; border: 2px solid #fff;
+    padding: 6px 18px; font-weight: bold;
+    font-size: 13px; letter-spacing: 3px;
+    cursor: pointer; font-family: inherit;
+    box-shadow: 3px 3px 0 #00f0ff;
+}
+.start-btn:hover { background: linear-gradient(90deg, #00f0ff, #ff00a0); }
+.tb-items { display: flex; gap: 8px; flex: 1; }
+.tb-item {
+    background: #2b0055; border: 2px solid #00f0ff;
+    color: #00f0ff; padding: 4px 14px; font-size: 12px;
+    cursor: pointer; font-weight: bold; letter-spacing: 1px;
+    min-width: 140px;
+}
+.tb-item:hover, .tb-item.active { background: #ff00a0; color: #fff; border-color: #fff; }
+.tb-tray {
+    background: #0a0022; border: 2px solid #ff88cc;
+    color: #ff88cc; padding: 4px 14px;
+    font-size: 12px; font-weight: bold; letter-spacing: 2px;
+    text-shadow: 0 0 6px rgba(255,136,204,0.7);
+}
+
+/* ✟ 漂浮装饰（精神药品名称） ✟ */
+.drug-float {
+    position: absolute; font-size: 13px; font-weight: bold;
+    letter-spacing: 2px; opacity: 0.55; pointer-events: none;
+    animation: drug-drift 15s linear infinite;
+    text-shadow: 0 0 8px currentColor;
+}
+@keyframes drug-drift {
+    0%   { transform: translateY(0) translateX(-5%); opacity: 0; }
+    10%  { opacity: 0.6; }
+    90%  { opacity: 0.6; }
+    100% { transform: translateY(-80vh) translateX(5%); opacity: 0; }
+}
+
+/* ✟ 标签页切换 ✟ */
+.tabs { display: flex; gap: 3px; margin-bottom: 0; border-bottom: 2px solid #ff00a0; }
+.tab {
+    padding: 8px 18px; font-size: 12px; cursor: pointer;
+    background: #1a0033; color: #88ccff;
+    border: 2px solid #ff00a0; border-bottom: none;
+    font-weight: bold; letter-spacing: 2px;
+}
+.tab.active { background: linear-gradient(90deg, #ff00a0, #aa00cc); color: #fff; box-shadow: 0 -3px 0 #00f0ff; }
+.tab:hover:not(.active) { background: #2b0055; color: #fff; }
+.tab-content { display: none; padding: 20px; }
+.tab-content.active { display: block; }
+
+/* ✟ 档案列表样式 ✟ */
+.profile-list { margin-top: 10px; }
+.profile-item {
+    background: #0a0022; border-left: 4px solid #ff00a0;
+    padding: 10px 14px; margin-bottom: 8px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px;
+}
+.profile-item:hover { background: #1a0044; border-left-color: #00f0ff; }
+.profile-item .name { font-weight: bold; color: #ff88cc; letter-spacing: 1px; }
+.profile-item .meta { color: #88ccff; font-size: 11px; letter-spacing: 1px; }
+
+/* ✟ 滚动条美化 ✟ */
+::-webkit-scrollbar { width: 12px; height: 12px; }
+::-webkit-scrollbar-track { background: #1a0033; }
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #ff00a0, #00f0ff);
+    border: 2px solid #1a0033;
+}
+::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #00f0ff, #ff00a0); }
+/* ✟ 唱片机按钮 ✟ */
+.music-turntable {
+    background: none;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.music-turntable:hover { transform: scale(1.08); }
+.music-turntable:active { transform: scale(0.95); }
+.music-turntable svg {
+    transition: filter 0.3s ease;
+}
+.music-turntable.playing svg {
+    animation: spin 4s linear infinite;
+    filter: drop-shadow(0 0 8px #ff00aa);
+}
+.music-turntable.paused svg {
+    animation: none;
+    filter: grayscale(0.6) brightness(0.6);
+}
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+</style>
+</head>
+<body>
+
+<!-- ✟ 漂浮药品名称装饰 ✟ -->
+<div class="drug-float" style="left:5%;top:70%;color:#ff88cc;animation-delay:0s;">Diazepam 地西泮</div>
+<div class="drug-float" style="left:25%;top:85%;color:#88ccff;animation-delay:-3s;">Midazolam 咪达唑仑</div>
+<div class="drug-float" style="left:45%;top:90%;color:#ffaaee;animation-delay:-6s;">Fentanyl 芬太尼</div>
+<div class="drug-float" style="left:65%;top:75%;color:#ffeeaa;animation-delay:-9s;">Propofol 丙泊酚</div>
+<div class="drug-float" style="left:85%;top:80%;color:#88ffcc;animation-delay:-12s;">Haloperidol 氟哌啶醇</div>
+
+<!-- ✟ 桌面快捷图标 ✟ -->
+<div class="desktop-icons">
+    <a href="/" class="dt-icon">
+        <span class="emoji">♥</span>
+        监护台<br>Monitor
+    </a>
+    <div class="dt-icon" onclick="switchTab(0)">
+        <span class="emoji">📁</span>
+        设备选择<br>Devices
+    </div>
+    <div class="dt-icon" onclick="switchTab(1)">
+        <span class="emoji">✎</span>
+        档案编辑<br>Profile
+    </div>
+    <div class="dt-icon" onclick="alert('♡ OpenMonitor Admin System ♡\\n版本: v4.2 Neon-Dream\\n\\n正在管理患者档案数据库...')">
+        <span class="emoji">⚙</span>
+        关于系统<br>About
+    </div>
+</div>
+
+<div class="desktop-layer">
+
+    <!-- ✟ 顶部窗口：标题 + 返回 ✟ -->
+    <div class="window">
+        <div class="win-titlebar">
+            <span class="win-title">♡ [ OpenMonitor Admin Console - 患者档案管理 ] v4.2 Neon-Dream ♡</span>
+            <span class="win-btn">_</span>
+            <span class="win-btn">▢</span>
+            <span class="win-btn" onclick="location.href='/'">✕</span>
+        </div>
+        <div class="win-body" style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+            <h1 style="font-size:22px;letter-spacing:4px;text-shadow:3px 3px 0 #ff00a0, 0 0 15px #ff66aa;">✟ 天使酱档案管理台 ✟</h1>
+            <span style="font-size:12px;color:#88ccff;letter-spacing:2px;">// Patient Profile Manager // 管理监护仪绑定的患者数据</span>
+            <a href="/" class="back-btn" style="margin-left:auto;">← 返回监护台</a>
+        </div>
+    </div>
+
+    <!-- ✟ 主内容窗口：带标签页 ✟ -->
+    <div class="window">
+        <div class="win-titlebar">
+            <span class="win-title">♡ C:\Patient\Profile.exe - 档案编辑器 ♡</span>
+            <span class="win-btn">_</span>
+            <span class="win-btn">▢</span>
+            <span class="win-btn">✕</span>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab(0)">① 设备选择</div>
+            <div class="tab" onclick="switchTab(1)">② 编辑档案</div>
+            <div class="tab" onclick="switchTab(2)">③ 档案列表</div>
+            <div class="tab" onclick="switchTab(3)">④ 网络测试</div>
+            <div class="tab" onclick="switchTab(4)">⑤ 后台音乐</div>
+        </div>
+
+        <!-- ✟ 标签 0：设备选择 ✟ -->
+        <div class="tab-content active" id="tab-0">
+            <div style="font-size:13px;color:#88ccff;margin-bottom:12px;letter-spacing:2px;">
+                // 请选择您要管理的监护仪设备。每次数据上传均会关联此 SN 编号的档案。
+            </div>
+            <select id="device_select" class="device-select" onchange="loadDeviceProfile()">
+                <option value="">—— 正在加载设备列表 ——</option>
+            </select>
+            <div style="margin-top: 10px;">
+                <button class="btn btn-secondary" onclick="refreshDeviceList()">🔄 刷新设备列表</button>
+            </div>
+            <div class="hint">提示：当监护仪首次连接时，SN 会被自动注册到此列表。</div>
+        </div>
+
+        <!-- ✟ 标签 1：编辑档案 ✟ -->
+        <div class="tab-content" id="tab-1">
+            <div style="font-size:13px;color:#ff88cc;margin-bottom:12px;letter-spacing:2px;" id="edit_hint">
+                // 请先在 [① 设备选择] 中挑选设备，才能编辑其档案。
+            </div>
+
+            <div id="edit_section" style="display:none;">
+                <div class="form-group">
+                    <label>监护仪 SN（只读） / Device Serial</label>
+                    <input type="text" id="f_device_id" readonly>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>患者姓名 / Patient Name</label>
+                        <input type="text" id="f_patient_name">
+                    </div>
+                    <div class="form-group">
+                        <label>性别 / Gender</label>
+                        <select id="f_gender">
+                            <option value="">—</option>
+                            <option>男</option>
+                            <option>女</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>年龄 / Age</label>
+                        <input type="number" id="f_age" min="0" max="150">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>医院 / Hospital</label>
+                        <input type="text" id="f_hospital" placeholder="如:XX人民医院">
+                    </div>
+                    <div class="form-group">
+                        <label>科室 / Department</label>
+                        <input type="text" id="f_department" placeholder="心内科 / ICU / 急诊 ...">
+                    </div>
+                    <div class="form-group">
+                        <label>床位号 / Bed No.</label>
+                        <input type="text" id="f_bed_id">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>身份证号 / ID Card</label>
+                        <input type="text" id="f_id_card">
+                    </div>
+                    <div class="form-group">
+                        <label>联系电话 / Phone</label>
+                        <input type="text" id="f_phone">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>入院时间 / Admission</label>
+                        <input type="text" id="f_admission_time" placeholder="2025-01-15">
+                    </div>
+                    <div class="form-group">
+                        <label>主管医生 / Doctor</label>
+                        <input type="text" id="f_doctor">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>诊断 / 主诉 / Diagnosis</label>
+                    <input type="text" id="f_diagnosis">
+                </div>
+
+                <div class="form-group">
+                    <label>备注 / Notes</label>
+                    <textarea id="f_note" rows="3"></textarea>
+                </div>
+
+                <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn" onclick="saveProfile()">💾 保存档案 (Save)</button>
+                    <button class="btn btn-secondary" onclick="clearForm()">清空表单 (Clear)</button>
+                    <button class="btn" style="background: linear-gradient(90deg, #ff0055, #ff00aa); box-shadow: 3px 3px 0 #ffee00;" onclick="deleteProfile()">🗑 删除此患者档案 (Delete)</button>
+                    <button class="btn btn-secondary" onclick="deleteDevice()" style="background: linear-gradient(90deg, #aa00ff, #5500aa);">🗑 移除设备注册 (Remove Device)</button>
+                </div>
+
+                <div id="save_status" class="status"></div>
+                <div class="hint">📝 说明：保存后，前端监护页面的患者档案会同步更新（所有字段为只读显示）。删除操作不可恢复，请谨慎使用。</div>
+            </div>
+        </div>
+
+        <!-- ✟ 标签 2：档案列表 ✟ -->
+        <div class="tab-content" id="tab-2">
+            <div style="font-size:13px;color:#88ccff;margin-bottom:12px;letter-spacing:2px;">
+                // 当前已加载的患者档案（如需更多数据，请先在标签①中选择设备）。
+            </div>
+            <div id="profile_list" class="profile-list">
+                <div style="padding:30px;text-align:center;color:#888;letter-spacing:2px;font-size:13px;">
+                    ♡ 暂无档案，请先选择设备并保存档案 ♡
+                </div>
+            </div>
+        </div>
+
+        <!-- ✟ 标签 3：网络连通性测试 ✟ -->
+        <div class="tab-content" id="tab-3">
+            <div style="font-size:13px;color:#ffaa00;margin-bottom:12px;letter-spacing:2px;">
+                // 测试监护仪 IP 和常用端口的可达性。
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>目标 IP / Host</label>
+                    <input type="text" id="ping_host" placeholder="192.168.1.100">
+                </div>
+                <div class="form-group">
+                    <label>端口 / Port</label>
+                    <input type="number" id="ping_port" value="8000">
+                </div>
+            </div>
+            <div style="margin-top: 10px;">
+                <button class="btn" onclick="testNetwork()">🌐 测试 TCP 连接</button>
+                <button class="btn btn-secondary" onclick="testNetworkCommon()" style="margin-left: 10px;">🔔 测试常用端口(80/443/8000)</button>
+            </div>
+            <div id="network_status" class="status"></div>
+            <div class="hint">💡 提示：此功能不依赖系统 ping 命令，仅测试指定端口是否能建立 TCP 连接。</div>
+        </div>
+
+        <!-- ✟ 标签 4：后台音乐 ✟ -->
+        <div class="tab-content" id="tab-4">
+            <div style="font-size:13px;color:#ff88cc;margin-bottom:12px;letter-spacing:2px;">
+                // 后台音乐控制台（adimin.mp3）
+            </div>
+            <audio id="admin-audio" src="/audio/admin.mp3" loop></audio>
+            <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;">
+                <button id="music-toggle-btn" class="music-turntable" onclick="toggleMusic()" title="点击播放/停止">
+                    <svg viewBox="0 0 100 100" width="90" height="90">
+                        <circle cx="50" cy="50" r="46" fill="#220033" stroke="#ff00aa" stroke-width="2"/>
+                        <circle cx="50" cy="50" r="34" fill="none" stroke="#660055" stroke-width="1"/>
+                        <circle cx="50" cy="50" r="22" fill="none" stroke="#660055" stroke-width="1"/>
+                        <circle cx="50" cy="50" r="10" fill="#ff00aa"/>
+                        <circle cx="50" cy="50" r="3" fill="#ffee00"/>
+                        <g id="tonearm" transform="translate(50,50) rotate(-30)">
+                            <line x1="0" y1="0" x2="38" y2="0" stroke="#cccccc" stroke-width="3"/>
+                            <circle cx="38" cy="0" r="4" fill="#00f0ff"/>
+                        </g>
+                    </svg>
+                    <div id="music-status" style="font-size:12px;color:#88ccff;letter-spacing:1px;margin-top:6px;">♪ 正在播放 ♪</div>
+                </button>
+                <div style="font-size:12px;color:#88ccff;letter-spacing:1px;line-height:1.8;">
+                    💡 建议在值班期间播放舒缓音乐以缓解疲劳<br>
+                    🎵 点击左侧唱片机可随时播放或停止
+                </div>
+            </div>
+            <div class="hint">🎵 音频文件路径: <span style="color:#ffee00;">E:\OpenMonitor\audio\adimin.mp3</span></div>
+        </div>
+    </div>
+
+    <!-- ✟ 底部装饰窗口：系统状态（伪终端输出） ✟ -->
+    <div class="window">
+        <div class="win-titlebar">
+            <span class="win-title">♡ C:\System\Status.log - 系统日志 ♡</span>
+            <span class="win-btn">_</span>
+            <span class="win-btn">▢</span>
+            <span class="win-btn">✕</span>
+        </div>
+        <div class="win-body" style="font-size:12px;line-height:1.8;letter-spacing:1px;color:#88ffcc;background:#05000f;padding:18px;">
+            <div>[<span style="color:#ff00a0;">OK</span>] OpenMonitor Admin v4.2 Neon-Dream 已启动...</div>
+            <div>[<span style="color:#ff00a0;">OK</span>] 正在连接数据库: <span style="color:#ffee00;">vital_signs.db</span></div>
+            <div>[<span style="color:#ff00a0;">OK</span>] 精神药品参考数据集加载完毕</div>
+            <div>[<span style="color:#ff00a0;">OK</span>] WebSocket 通道状态: <span style="color:#00f0ff;">LISTENING</span></div>
+            <div>[<span style="color:#ff00a0;">OK</span>] 标签页组件就绪 · 等待用户操作</div>
+            <div style="color:#ff88cc;">♡ Angel-chan Admin Console · 等待您的指令 ♡</div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ✟ 任务栏（伪 Win95） ✟ -->
+<div class="taskbar">
+    <div class="start-btn" onclick="alert('♡ 天使酱开始菜单 ♡\\n\\n• 患者档案管理\\n• 设备列表\\n• 报警日志\\n• 系统设置\\n• 关于...')">▶ 开 始</div>
+    <div class="tb-items">
+        <div class="tb-item active">[0] Admin Console</div>
+        <div class="tb-item" onclick="switchTab(0)">[1] 设备选择</div>
+        <div class="tb-item" onclick="switchTab(1)">[2] 档案编辑器</div>
+        <div class="tb-item" onclick="location.href='/'">[3] 返回监护台 →</div>
+    </div>
+    <div class="tb-tray" id="tb-clock">♡ 00:00:00</div>
+</div>
+
+<script>
+/* ========== 标签页切换 ========== */
+function switchTab(idx) {
+    const tabs = document.querySelectorAll('.tab');
+    const contents = document.querySelectorAll('.tab-content');
+    tabs.forEach(function (t, i) { t.classList.toggle('active', i === idx); });
+    contents.forEach(function (c, i) { c.classList.toggle('active', i === idx); });
+}
+
+/* ========== 时钟（任务栏） ========== */
+function tickClock() {
+    const el = document.getElementById('tb-clock');
+    if (!el) return;
+    const d = new Date();
+    const pad = function (n) { return (n < 10 ? '0' : '') + n; };
+    el.textContent = '♡ ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+}
+setInterval(tickClock, 1000); tickClock();
+
+/* ========== 设备管理（沿用原逻辑，增加标签切换联动） ========== */
+let lastDeviceId = '';
+async function refreshDeviceList() {
+    const sel = document.getElementById('device_select');
+    try {
+        const resp = await fetch("/vital/devices");
+        const data = await resp.json();
+        sel.innerHTML = '<option value="">—— 请选择设备 ——</option>';
+        (data.devices || []).forEach(function (dev) {
+            const opt = document.createElement("option");
+            opt.value = dev.id;
+            opt.textContent = dev.label;
+            if (dev.id === lastDeviceId) opt.selected = true;
+            sel.appendChild(opt);
+        });
+        renderProfileList(data.devices);
+    } catch (e) {
+        sel.innerHTML = '<option value="">⚠️ 加载失败，请重试</option>';
+    }
+}
+function renderProfileList(devices) {
+    const list = document.getElementById("profile_list");
+    if (!devices || devices.length === 0) {
+        list.innerHTML = '<div style="padding:30px;text-align:center;color:#888;letter-spacing:2px;font-size:13px;">♡ 暂无档案，请先选择设备并保存档案 ♡</div>';
+        return;
+    }
+    list.innerHTML = devices.map(function (d) {
+        return '<div class="profile-item">'
+             + '<div><span class="name">♡ ' + (d.label || d.id) + '</span><br><span class="meta">SN: ' + d.id + '</span></div>'
+             + '<div class="meta">已注册 · 点击"设备选择"编辑档案 →</div>'
+             + '</div>';
+    }).join('');
+}
+
+async function loadDeviceProfile() {
+    const devId = document.getElementById("device_select").value;
+    const hint = document.getElementById("edit_hint");
+    const editSec = document.getElementById("edit_section");
+
+    if (!devId) {
+        editSec.style.display = "none";
+        if (hint) hint.textContent = "// 请先在 [① 设备选择] 中挑选设备，才能编辑其档案。";
+        return;
+    }
+    lastDeviceId = devId;
+    editSec.style.display = "block";
+    if (hint) hint.textContent = "// 正在加载设备 [" + devId + "] 的患者档案...";
+    document.getElementById("f_device_id").value = devId;
+
+    ["f_patient_name","f_gender","f_age","f_hospital","f_department","f_bed_id","f_id_card","f_phone","f_admission_time","f_doctor","f_diagnosis","f_note"].forEach(function (id) {
+        document.getElementById(id).value = "";
+    });
+
+    try {
+        const resp = await fetch("/vital/patient?device_id=" + encodeURIComponent(devId));
+        const p = await resp.json();
+        if (p.patient_name) document.getElementById("f_patient_name").value = p.patient_name;
+        if (p.gender) document.getElementById("f_gender").value = p.gender;
+        if (p.age) document.getElementById("f_age").value = p.age;
+        if (p.hospital) document.getElementById("f_hospital").value = p.hospital;
+        if (p.department) document.getElementById("f_department").value = p.department;
+        if (p.bed_id) document.getElementById("f_bed_id").value = p.bed_id;
+        if (p.id_card) document.getElementById("f_id_card").value = p.id_card;
+        if (p.phone) document.getElementById("f_phone").value = p.phone;
+        if (p.admission_time) document.getElementById("f_admission_time").value = p.admission_time;
+        if (p.doctor) document.getElementById("f_doctor").value = p.doctor;
+        if (p.diagnosis) document.getElementById("f_diagnosis").value = p.diagnosis;
+        if (p.note) document.getElementById("f_note").value = p.note;
+        if (hint) hint.textContent = "✓ 档案加载完毕，请编辑后点击「保存档案」按钮";
+    } catch (e) {
+        document.getElementById("save_status").innerText = "⚠️ 加载档案失败: " + e.message;
+        document.getElementById("save_status").style.color = "#ff3355";
+    }
+}
+
+async function saveProfile() {
+    const devId = document.getElementById("device_select").value;
+    if (!devId) { alert("⚠️ 请先选择设备"); return; }
+
+    const payload = {
+        device_id: devId,
+        patient_name: document.getElementById("f_patient_name").value.trim(),
+        gender: document.getElementById("f_gender").value,
+        age: parseInt(document.getElementById("f_age").value) || null,
+        hospital: document.getElementById("f_hospital").value.trim(),
+        department: document.getElementById("f_department").value.trim(),
+        bed_id: document.getElementById("f_bed_id").value.trim(),
+        id_card: document.getElementById("f_id_card").value.trim(),
+        phone: document.getElementById("f_phone").value.trim(),
+        diagnosis: document.getElementById("f_diagnosis").value.trim(),
+        admission_time: document.getElementById("f_admission_time").value.trim(),
+        doctor: document.getElementById("f_doctor").value.trim(),
+        note: document.getElementById("f_note").value.trim(),
+    };
+
+    const statusEl = document.getElementById("save_status");
+    try {
+        const resp = await fetch("/vital/patient", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(payload),
+        });
+        if (resp.ok) {
+            statusEl.innerText = "✅ 患者档案已保存！刷新监护页面即可查看更新。";
+            statusEl.style.color = "#00ff88";
+            refreshDeviceList();
+        } else {
+            statusEl.innerText = "⚠️ 保存失败";
+            statusEl.style.color = "#ff3355";
+        }
+    } catch (e) {
+        statusEl.innerText = "⚠️ 保存失败: " + e.message;
+        statusEl.style.color = "#ff3355";
+    }
+}
+
+/* ✟ 删除当前设备的患者档案 ✟ */
+async function deleteProfile() {
+    const devId = document.getElementById("device_select").value;
+    if (!devId) { alert("⚠️ 请先选择设备"); return; }
+    const patientName = document.getElementById("f_patient_name").value.trim();
+    if (!confirm("⚠️ 确认删除设备 [" + devId + "]" + (patientName ? "(" + patientName + ")" : "") + " 的患者档案？\n\n此操作不可恢复！")) { return; }
+
+    const statusEl = document.getElementById("save_status");
+    try {
+        const resp = await fetch("/vital/patient?device_id=" + encodeURIComponent(devId), { method: "DELETE" });
+        if (resp.ok) {
+            statusEl.innerText = "✅ 患者档案已删除";
+            statusEl.style.color = "#00ff88";
+            clearForm();
+            refreshDeviceList();
+        } else {
+            const data = await resp.json().catch(() => ({}));
+            statusEl.innerText = "⚠️ 删除失败: " + (data.msg || "未知错误");
+            statusEl.style.color = "#ff3355";
+        }
+    } catch (e) {
+        statusEl.innerText = "⚠️ 删除失败: " + e.message;
+        statusEl.style.color = "#ff3355";
+    }
+}
+
+/* ✟ 从设备注册表中移除一个设备 ✟ */
+async function deleteDevice() {
+    const devId = document.getElementById("device_select").value;
+    if (!devId) { alert("⚠️ 请先选择设备"); return; }
+    if (!confirm("⚠️ 确认从设备注册表中移除 [" + devId + "]？\n\n注意：此操作不影响已存的体征数据和报警记录。患者档案不受影响。")) { return; }
+
+    const statusEl = document.getElementById("save_status");
+    try {
+        const resp = await fetch("/device/delete?sn=" + encodeURIComponent(devId), { method: "DELETE" });
+        if (resp.ok) {
+            statusEl.innerText = "✅ 设备已从注册表中移除（体征数据保留）";
+            statusEl.style.color = "#00ff88";
+            clearForm();
+            refreshDeviceList();
+        } else {
+            const data = await resp.json().catch(() => ({}));
+            statusEl.innerText = "⚠️ 移除失败: " + (data.msg || "未知错误");
+            statusEl.style.color = "#ff3355";
+        }
+    } catch (e) {
+        statusEl.innerText = "⚠️ 移除失败: " + e.message;
+        statusEl.style.color = "#ff3355";
+    }
+}
+
+function clearForm() {
+    ["f_patient_name","f_gender","f_age","f_hospital","f_department","f_bed_id","f_id_card","f_phone","f_admission_time","f_doctor","f_diagnosis","f_note"].forEach(function (id) {
+        document.getElementById(id).value = "";
+    });
+    document.getElementById("save_status").innerText = "";
+}
+
+/* ✟ 网络测试：单端口 TCP 可达性 ✟ */
+async function testNetwork() {
+    const host = document.getElementById("ping_host").value.trim();
+    const port = parseInt(document.getElementById("ping_port").value) || 0;
+    const statusEl = document.getElementById("network_status");
+    if (!host || !port) { statusEl.innerText = "⚠️ 请输入有效的 IP 与端口"; statusEl.style.color = "#ff3355"; return; }
+
+    statusEl.innerText = "⏳ 正在测试 " + host + ":" + port + " ...";
+    statusEl.style.color = "#ffee00";
+    try {
+        const resp = await fetch("/vital/ping", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ host: host, port: port }),
+        });
+        const data = await resp.json();
+        if (data.ok) {
+            statusEl.innerText = "✅ TCP 可达 — " + host + ":" + port + " — 耗时 " + data.latency_ms + " ms (" + (data.msg || "") + ")";
+            statusEl.style.color = "#00ff88";
+        } else {
+            statusEl.innerText = "❌ TCP 不可达 — " + host + ":" + port + " — " + (data.msg || "连接失败");
+            statusEl.style.color = "#ff3355";
+        }
+    } catch (e) {
+        statusEl.innerText = "⚠️ 测试异常: " + e.message;
+        statusEl.style.color = "#ff3355";
+    }
+}
+
+/* ✟ 快速测试 80/443/8000 三个常用端口 ✟ */
+async function testNetworkCommon() {
+    const host = document.getElementById("ping_host").value.trim();
+    const statusEl = document.getElementById("network_status");
+    if (!host) { statusEl.innerText = "⚠️ 请先输入目标 IP"; statusEl.style.color = "#ff3355"; return; }
+    statusEl.style.color = "#ffee00";
+    statusEl.innerText = "⏳ 正在批量测试 " + host + " ...";
+
+    const results = [];
+    for (const port of [80, 443, 8000]) {
+        try {
+            const resp = await fetch("/vital/ping", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({ host: host, port: port }),
+            });
+            const data = await resp.json();
+            if (data.ok) { results.push("✅ :" + port + " OK (" + data.latency_ms + "ms)"); }
+            else { results.push("❌ :" + port + " FAIL"); }
+        } catch (e) {
+            results.push("⚠️ :" + port + " ERROR: " + e.message);
+        }
+    }
+    statusEl.innerText = "📋 " + host + ": " + results.join("  |  ");
+    statusEl.style.color = "#00f0ff";
+}
+
+/* ========== 音乐播放控制 ========== */
+let _audioInitialized = false;
+function toggleMusic() {
+    const audio = document.getElementById("admin-audio");
+    const btn = document.getElementById("music-toggle-btn");
+    const status = document.getElementById("music-status");
+    if (!audio) return;
+    if (audio.paused) {
+        audio.play().then(() => {
+            btn.classList.remove("paused");
+            btn.classList.add("playing");
+            status.innerText = "♪ 正在播放 ♪";
+            status.style.color = "#88ccff";
+        }).catch(function (e) {
+            status.innerText = "⚠ 浏览器阻止自动播放，请手动点击";
+            status.style.color = "#ffcc00";
+        });
+    } else {
+        audio.pause();
+        btn.classList.remove("playing");
+        btn.classList.add("paused");
+        status.innerText = "⏸ 已停止";
+        status.style.color = "#ff8888";
+    }
+}
+function _autoStartMusic() {
+    if (_audioInitialized) return;
+    _audioInitialized = true;
+    const audio = document.getElementById("admin-audio");
+    const btn = document.getElementById("music-toggle-btn");
+    const status = document.getElementById("music-status");
+    if (!audio) return;
+    audio.volume = 0.5;
+    audio.play().then(() => {
+        btn.classList.add("playing");
+        status.innerText = "♪ 正在播放 ♪";
+    }).catch(function () {
+        btn.classList.add("paused");
+        status.innerText = "▶ 点击开始播放";
+        status.style.color = "#ffcc00";
+    });
+}
+
+/* 页面初始化 */
+refreshDeviceList();
+_autoStartMusic();
+</script>
+
+<!-- 底部版权小字样（地雷系，可点击进入彩蛋） -->
+<div style="position:fixed;bottom:6px;left:0;right:0;text-align:center;pointer-events:auto;z-index:999;">
+    <a href="/easter" style="font-family:'Courier New','MS Gothic',monospace;font-size:10px;color:#ff88cc;letter-spacing:2px;text-decoration:none;opacity:0.55;text-shadow:0 0 3px #ff00aa;cursor:pointer;">
+        ♡ © 2025 Angel-chan · 版权归属于末音 · 祝愿末音能从病痛中走出来 ♡
+    </a>
+</div>
+</body>
+</html>

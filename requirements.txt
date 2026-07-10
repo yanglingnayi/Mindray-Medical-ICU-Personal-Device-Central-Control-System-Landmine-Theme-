@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+aiosqlite
+python-dotenv
+hl7
+python-multipart
+websockets
+pydantic>=2.0

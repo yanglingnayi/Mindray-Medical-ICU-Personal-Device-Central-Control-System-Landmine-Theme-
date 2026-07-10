@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# PyCharm / IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Database  （仅数据库不提交，避免上传个人患者数据）
+*.db
+*.sqlite
+*.sqlite3
+data/
+monitor_data.db
+monitor.db
+
+# Logs
+logs/
+*.log
+
+# Environment
+.env
+
+# OS
+.DS_Store
+Thumbs.db
