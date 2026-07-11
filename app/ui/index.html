@@ -92,8 +92,25 @@ body.alarm-active {
     margin: 2px auto 8px auto; overflow: hidden;
     background: radial-gradient(circle, #3a0050 0%, #000 100%);
     box-shadow: 0 0 18px rgba(255, 0, 160, 0.6), inset 0 0 12px rgba(255, 0, 160, 0.3);
+    cursor: pointer; position: relative;
+    transition: transform 0.2s ease;
+}
+.avatar-container:hover {
+    transform: scale(1.05);
+    border-color: #00f0ff;
+    box-shadow: 0 0 25px rgba(0, 240, 255, 0.8), inset 0 0 12px rgba(0, 240, 255, 0.3);
+}
+.avatar-container::after {
+    content: "📷 点击上传";
+    position: absolute; bottom: -22px; left: 50%; transform: translateX(-50%);
+    font-size: 10px; color: #ff88cc; white-space: nowrap;
+    text-shadow: 0 0 4px #ff00a0;
 }
 .avatar-container img { width: 100%; height: 100%; object-fit: cover; }
+.avatar-save-status {
+    margin: 24px auto 4px auto; font-size: 11px; text-align: center;
+    letter-spacing: 1px; color: #88ccff;
+}
 .form-group { margin-bottom: 8px; }
 .form-group label { display: block; font-size: 11px; color: #00f0ff; margin-bottom: 3px; font-weight: bold; }
 .form-group input, .form-group select {
@@ -524,7 +541,7 @@ canvas { width: 100%; height: 100%; display: block; }
         </div>
         <div class="window-body">
             <div class="avatar-container">
-                <img id="avatar-preview" src="/img/tu.jpg" onerror="this.src='https://api.dicebear.com/7.x/adventurer/svg?seed=Chouten'"/>
+                <img id="avatar-preview" src="https://api.dicebear.com/7.x/adventurer/svg?seed=Chouten"/>
             </div>
             <div class="form-group"><label class="monitor-label">监护仪 SN（监护来源·只读）</label>
                 <input type="text" id="dev_sn" value="-- 接入中 --" readonly class="readonly-input">
@@ -1208,10 +1225,12 @@ function _connectWs() {
         const nowTimeStr = new Date().toTimeString().split(' ')[0];
 
         if (res.type === "alarm_stream") {
-            handleIncomingAlarm(res.alarm_text);
-            const info = analyzeAlarmLocal(res.alarm_text);
-            if (info.severity === "P0" || info.severity === "P1") {
-                triggerSystemAlarm(res.alarm_text);
+            // ✟ 后端已完成 MDC 编码解析与级别重映射 ✟
+            const structuredInfo = _extractStructuredAlarm(res);
+            handleIncomingAlarm(res.alarm_text, structuredInfo);
+            // 只有 P0 致命报警（心脏停搏/室颤/室速/窒息/PEA 等）才弹大窗
+            if (structuredInfo.severity === "P0") {
+                triggerSystemAlarm(res.alarm_text, structuredInfo);
             }
             return;
         }
@@ -1351,6 +1370,68 @@ _connectWs();
 let lastBPString = "";
 
 const SEVERITY_LABEL = {"P0":"🚨 致命","P1":"🔥 紧急","P2":"⚠️ 关注","P3":"ℹ️ 提示"};
+
+// 将后端 mindray_alarm 解析器输出的字段 -> 前端 deepInfo 对象
+// 若后端字段缺失则回退到前端关键词匹配
+function _extractStructuredAlarm(res) {
+    // 后端已完成级别重映射：severity = P0（致命）/ P2（注意）/ P3（提示）
+    // 前端使用 severity 决定渲染方式
+    let severity = res.severity || "P3";
+    // 兜底：如果后端未传 severity，则从 level 映射
+    if (!res.severity && res.level) {
+        const sevMap = {1: "P0", 2: "P2", 3: "P3"};
+        severity = sevMap[res.level] || "P3";
+    }
+
+    const category = res.category || "";
+    const catLabel = {
+        physiological: "生理报警",
+        technical: "技术报警",
+        arrhythmia: "心律失常"
+    }[category] || "其他报警";
+
+    const metric = res.metric || res.alarm_text || "未知指标";
+    let valueStr = res.value || "—";
+    if (res.unit) valueStr += " " + res.unit;
+
+    // 优先使用后端传入的 cause，否则根据分类构造
+    let causeText = res.cause || "";
+    if (!causeText || causeText.length < 4) {
+        if (category === "physiological") {
+            causeText = "生理参数越限：" + (res.violation || metric || "偏离正常范围");
+        } else if (category === "technical") {
+            causeText = "设备/导联异常：" + (res.alarm_text || metric || "连接或信号质量问题");
+        } else if (category === "arrhythmia") {
+            causeText = "心律异常事件：" + (res.alarm_text || metric || "需要医师判读");
+        } else {
+            causeText = res.alarm_text || "需人工判断";
+        }
+    }
+
+    // 处置建议：优先后端，否则前端关键词兜底
+    let actionText = res.suggestion || "";
+    if (!actionText || actionText.length < 5) {
+        const fallback = analyzeAlarmDeep(res.alarm_text || "");
+        actionText = fallback.action;
+        if (!causeText || causeText.length < 5) causeText = fallback.cause;
+    }
+
+    return {
+        severity: severity,
+        metric: metric,
+        value: valueStr,
+        range: res.range || "参考设备设定",
+        cause: causeText,
+        action: actionText,
+        category: catLabel,
+        alarm_text: res.alarm_text,
+        alarm_count: res.alarm_count || 0,
+        raw_message: res.raw_message || "",
+        alarms: res.alarms || [],
+        violation: res.violation || "",
+    };
+}
+
 function analyzeAlarmLocal(text) {
     const rules = [
         [[/停搏|ASYS|asystole/i], "心率异常", "P0", "⚠️ 心脏停搏！立即抢救"],
@@ -1432,6 +1513,7 @@ async function loadHistoryFromDb(hours) {
                     if (p.admission_time) document.getElementById("p_admission").value = p.admission_time;
                     if (p.doctor) document.getElementById("p_doctor").value = p.doctor;
                     if (p.note) document.getElementById("p_note").value = p.note;
+                    if (p.photo) document.getElementById("avatar-preview").src = p.photo;
                     consoleDom.innerText += '👤 [患者档案] ' + (p.patient_name || '—') + ' ' + (p.gender || '') + ' ' + (p.age ? p.age + '岁' : '') + ' ' + (p.hospital || '') + ' ' + (p.department || '') + ' ' + (p.bed_id || '') + '\n';
                     consoleDom.scrollTop = consoleDom.scrollHeight;
                 });
@@ -1519,17 +1601,35 @@ async function archiveBingli() {
     }
 }
 
-function handleIncomingAlarm(alarmText) {
-    const info = analyzeAlarmLocal(alarmText);
-    const deep = analyzeAlarmDeep(alarmText);
-    let line = (SEVERITY_LABEL[info.severity] || info.severity) + " [" + deep.metric + "] " + (deep.cause.length > 30 ? deep.cause.substring(0, 30) + "..." : deep.cause);
-    if (deep.severity === "P3" && deep.category === "其他报警") {
-        line += '  — 原文: "' + (alarmText || "—") + '"';
+function handleIncomingAlarm(alarmText, structuredInfo) {
+    // ✟ 优先使用后端解析的结构化信息；否则回退到前端关键词匹配 ✟
+    let deep = structuredInfo;
+    if (!deep || !deep.metric || deep.metric === "未知指标") {
+        deep = analyzeAlarmDeep(alarmText);
     }
-    appendToTimeline(line, info.severity === "P0" || info.severity === "P1");
-    consoleDom.innerText += "🚨 [实时报警·" + deep.severity + "] " + deep.metric + "｜" + (deep.cause.length > 60 ? deep.cause.substring(0, 60) + "..." : deep.cause) + " (原文: " + alarmText + ")\n";
+
+    let line = (SEVERITY_LABEL[deep.severity] || deep.severity) + " [" + deep.metric + "] " +
+               (deep.cause.length > 30 ? deep.cause.substring(0, 30) + "..." : deep.cause);
+    if (deep.alarm_count && deep.alarm_count > 1) {
+        line += "  +" + (deep.alarm_count - 1) + " 条附加报警";
+    }
+
+    appendToTimeline(line, deep.severity === "P0");
+
+    let consoleMsg = "🚨 [实时报警·" + deep.severity + "] " + deep.metric +
+                     "｜" + (deep.cause.length > 60 ? deep.cause.substring(0, 60) + "..." : deep.cause) +
+                     " (原文: " + alarmText + ")";
+    if (deep.value && deep.value !== "—") consoleMsg += "  当前值: " + deep.value;
+    if (deep.range && deep.range !== "—") consoleMsg += "  参考: " + deep.range;
+    consoleDom.innerText += consoleMsg + "\n";
     consoleDom.scrollTop = consoleDom.scrollHeight;
-    if (deep.severity === "P0" || deep.severity === "P1") { showAngelAlarmModal(alarmText, deep); } else { showAngelAlarmToast(alarmText, deep); }
+
+    // ✟ 只有 P0 致命事件才弹大窗；其他均走右下角小弹窗 ✟
+    if (deep.severity === "P0") {
+        showAngelAlarmModal(alarmText, deep);
+    } else {
+        showAngelAlarmToast(alarmText, deep);
+    }
 }
 let alarmActiveTimer = null, toastTimer = null;
 function showAngelAlarmModal(alarmText, deepInfo) {
@@ -1537,29 +1637,60 @@ function showAngelAlarmModal(alarmText, deepInfo) {
     if (alarmActiveTimer) clearTimeout(alarmActiveTimer);
     alarmActiveTimer = setTimeout(function() { document.body.classList.remove("alarm-active"); }, 8000);
     const modal = document.getElementById("angel-alarm-modal"); if (!modal) return;
-    document.getElementById("alarm-severity-display").innerHTML = '<span class="alarm-severity-badge severity-' + deepInfo.severity + '">' + (SEVERITY_LABEL[deepInfo.severity] || deepInfo.severity) + ' ' + deepInfo.severity + '</span>';
+    document.getElementById("alarm-severity-display").innerHTML =
+        '<span class="alarm-severity-badge severity-' + deepInfo.severity + '">' +
+        (SEVERITY_LABEL[deepInfo.severity] || deepInfo.severity) + ' ' + deepInfo.severity + '</span>';
     document.getElementById("alarm-title-display").innerText = "† " + deepInfo.metric + " 异常 †";
-    const col = deepInfo.severity === "P0" ? "#ff1155" : deepInfo.severity === "P1" ? "#ffaa00" : deepInfo.severity === "P2" ? "#ffdd00" : "#00f0ff";
+    const col = deepInfo.severity === "P0" ? "#ff1155" :
+                deepInfo.severity === "P1" ? "#ffaa00" :
+                deepInfo.severity === "P2" ? "#ffdd00" : "#00f0ff";
     document.getElementById("alarm-analysis-display").style.color = col;
-    document.getElementById("aam-metric").innerHTML = deepInfo.metric + ' <span style="color:#aaa;font-size:12px;">[' + deepInfo.category + ']</span>';
-    document.getElementById("aam-value").innerHTML = '<span class="danger">' + deepInfo.value + '</span>';
-    document.getElementById("aam-range").innerText = deepInfo.range;
-    document.getElementById("aam-cause").innerText = deepInfo.cause;
-    document.getElementById("aam-action").innerText = deepInfo.action;
-    document.getElementById("alarm-raw-display").innerText = "【原始报警原文】 " + (alarmText || "—");
+
+    const metricHtml = deepInfo.metric +
+        ' <span style="color:#aaa;font-size:12px;">[' + (deepInfo.category || deepInfo.severity) + ']</span>' +
+        (deepInfo.alarm_count > 1 ? ' <span style="color:#ff88cc;font-size:12px;">同报文 ' + deepInfo.alarm_count + ' 条</span>' : '');
+    document.getElementById("aam-metric").innerHTML = metricHtml;
+
+    document.getElementById("aam-value").innerHTML =
+        '<span class="danger">' + (deepInfo.value || "—") + '</span>' +
+        (deepInfo.violation ? ' <span style="font-size:12px;color:#ffcc66;">(' + deepInfo.violation + ')</span>' : '');
+    document.getElementById("aam-range").innerText = deepInfo.range || "—";
+    document.getElementById("aam-cause").innerText = deepInfo.cause || "";
+    document.getElementById("aam-action").innerText = deepInfo.action || "";
+
+    // 如果有多条报警，在原始文本下面展开详情
+    let rawHtml = "【原始报警原文】 " + (alarmText || "—");
+    if (deepInfo.alarms && deepInfo.alarms.length > 1) {
+        rawHtml += "\n\n【同报文附加报警】";
+        for (let i = 1; i < deepInfo.alarms.length; i++) {
+            const a = deepInfo.alarms[i];
+            rawHtml += "\n  · " + (a.alarm_text_zh || a.alarm_text_en || a.parameter_key || "") +
+                       "  [级别 " + (a.alarm_level || "-") + "]" +
+                       (a.observed_value ? "  值: " + a.observed_value + (a.unit || "") : "");
+        }
+    }
+    document.getElementById("alarm-raw-display").innerText = rawHtml;
+
     modal.classList.add("show");
 }
 function showAngelAlarmToast(alarmText, deepInfo) {
     const toast = document.getElementById("angel-alarm-toast"); if (!toast) return;
     document.getElementById("toast-header").innerHTML = "♡ " + (SEVERITY_LABEL[deepInfo.severity] || deepInfo.severity) + " · " + deepInfo.metric;
-    document.getElementById("toast-header").style.color = deepInfo.severity === "P2" ? "#ffdd00" : "#00f0ff";
+    document.getElementById("toast-header").style.color =
+        deepInfo.severity === "P0" ? "#ff1155" :
+        deepInfo.severity === "P1" ? "#ffaa00" :
+        deepInfo.severity === "P2" ? "#ffdd00" : "#00f0ff";
     let body = deepInfo.cause.length > 60 ? deepInfo.cause.substring(0, 60) + "..." : deepInfo.cause;
+    if (deepInfo.value && deepInfo.value !== "—") body += "  当前: " + deepInfo.value;
     if (deepInfo.severity === "P3" && deepInfo.category === "其他报警") {
         body += '\n⚠ 原文: "' + (alarmText || "—") + '"';
     }
     document.getElementById("toast-body").innerText = body;
-    toast.style.borderColor = deepInfo.severity === "P2" ? "#ffdd00" : "#00f0ff";
-    toast.style.boxShadow = "4px 4px 0 #ff00a0, 0 0 20px " + (deepInfo.severity === "P2" ? "rgba(255,221,0,0.5)" : "rgba(0,240,255,0.5)");
+    const accentCol = deepInfo.severity === "P0" ? "#ff1155" :
+                      deepInfo.severity === "P1" ? "#ffaa00" :
+                      deepInfo.severity === "P2" ? "#ffdd00" : "#00f0ff";
+    toast.style.borderColor = accentCol;
+    toast.style.boxShadow = "4px 4px 0 #ff00a0, 0 0 20px " + accentCol + "80";
     toast.classList.add("show");
     if (toastTimer) clearTimeout(toastTimer);
     toastTimer = setTimeout(function() { toast.classList.remove("show"); }, 7000);
@@ -1611,8 +1742,10 @@ function _fireWindowsNotification(alarmText, deep) {
     } catch (err) {}
 }
 
-function triggerSystemAlarm(text) {
-    const deep = analyzeAlarmDeep(text);
+function triggerSystemAlarm(text, structuredInfo) {
+    const deep = structuredInfo && structuredInfo.metric && structuredInfo.metric !== "未知指标"
+        ? structuredInfo
+        : analyzeAlarmDeep(text);
     showAngelAlarmModal(text, deep);
     _fireWindowsNotification(text, deep);
 }
@@ -1624,5 +1757,118 @@ function triggerSystemAlarm(text) {
         ♡ © 2025 Angel-chan · 版权归属于末音 · 祝愿末音能从病痛中走出来 ♡
     </a>
 </div>
+
+<script>
+(function() {
+  var DEFAULT_AVATAR = "https://api.dicebear.com/7.x/adventurer/svg?seed=Chouten";
+  var avatarImg = document.getElementById("avatar-preview");
+  if (!avatarImg) return;
+  // 确保初始值是默认头像
+  if (!avatarImg.src || avatarImg.src.indexOf("tu.jpg") !== -1 || avatarImg.src === "") {
+    avatarImg.src = DEFAULT_AVATAR;
+  }
+  // 创建隐藏的文件输入
+  var fileInput = document.createElement("input");
+  fileInput.type = "file";
+  fileInput.id = "avatar-file-input";
+  fileInput.accept = "image/*";
+  fileInput.style.display = "none";
+  document.body.appendChild(fileInput);
+
+  // 绑定头像容器点击事件
+  var container = document.querySelector(".avatar-container");
+  if (container) {
+    container.addEventListener("click", function() {
+      fileInput.click();
+    });
+  }
+
+  // 图片裁剪：居中正方形裁剪，输出 base64
+  function cropAvatarToSquare(file, size) {
+    size = size || 256;
+    return new Promise(function(resolve, reject) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var img = new Image();
+        img.onload = function() {
+          var side = Math.min(img.width, img.height);
+          var sx = (img.width - side) / 2;
+          var sy = (img.height - side) / 2;
+          var canvas = document.createElement("canvas");
+          canvas.width = size;
+          canvas.height = size;
+          var ctx = canvas.getContext("2d");
+          ctx.drawImage(img, sx, sy, side, side, 0, 0, size, size);
+          resolve(canvas.toDataURL("image/jpeg", 0.85));
+        };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // 获取当前监护仪设备 ID
+  function getCurrentDeviceId() {
+    var sn = document.getElementById("dev_sn");
+    if (sn && sn.value && sn.value.indexOf("接入中") === -1) {
+      return sn.value;
+    }
+    return "";
+  }
+
+  // 控制台输出
+  function logConsole(msg) {
+    var consoleDom = document.getElementById("angel-console");
+    if (consoleDom) {
+      consoleDom.innerText += "[头像] " + msg + "\n";
+      consoleDom.scrollTop = consoleDom.scrollHeight;
+    }
+  }
+
+  // 文件选择处理
+  fileInput.addEventListener("change", function() {
+    var file = this.files && this.files[0];
+    if (!file) return;
+    if (!file.type || file.type.indexOf("image/") !== 0) {
+      alert("请选择图片文件 (PNG/JPG)");
+      this.value = "";
+      return;
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      alert("图片过大，请选择小于 8MB 的图片");
+      this.value = "";
+      return;
+    }
+    cropAvatarToSquare(file, 256).then(function(cropped) {
+      avatarImg.src = cropped;
+      var deviceId = getCurrentDeviceId();
+      if (!deviceId) {
+        alert("尚未检测到监护仪 SN，暂无法保存到数据库。\n请等待监护仪数据接入后再上传。");
+        fileInput.value = "";
+        return;
+      }
+      return fetch("/vital/patient/avatar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ device_id: deviceId, photo: cropped })
+      }).then(function(resp) { return resp.json(); });
+    }).then(function(result) {
+      if (result && result.ok) {
+        logConsole("已保存到设备档案");
+        alert("头像保存成功！");
+      } else if (result) {
+        alert("保存失败: " + (result.msg || "未知错误"));
+        avatarImg.src = DEFAULT_AVATAR;
+      }
+      fileInput.value = "";
+    }).catch(function(err) {
+      alert("头像处理失败: " + err.message);
+      fileInput.value = "";
+    });
+  });
+})();
+</script>
 </body>
 </html>

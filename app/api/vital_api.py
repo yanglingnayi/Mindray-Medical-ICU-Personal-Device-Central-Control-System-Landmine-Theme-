@@ -30,13 +30,18 @@ class PatientUpdate(BaseModel):
     age: Optional[int] = None
     department: str = ""
     hospital: str = ""
-    bed_id: str = ""
     id_card: str = ""
     phone: str = ""
     diagnosis: str = ""
     admission_time: str = ""
     doctor: str = ""
     note: str = ""
+    photo: str = ""
+
+
+class AvatarUpdate(BaseModel):
+    device_id: str
+    photo: str
 
 
 # ==============================
@@ -137,6 +142,7 @@ def _patient_to_dict(p: Patient):
         "admission_time": p.admission_time,
         "doctor": p.doctor,
         "note": p.note,
+        "photo": p.photo or "",
         "created": p.created.strftime("%Y-%m-%d %H:%M:%S") if p.created else "",
         "updated": p.updated.strftime("%Y-%m-%d %H:%M:%S") if p.updated else "",
     }
@@ -209,7 +215,7 @@ def get_patient(device_id: str = Query(...), db: Session = Depends(get_db)):
             "patient_name": v.patient_name if v and v.patient_name else "",
             "gender": "", "age": None, "department": "", "hospital": "", "bed_id": "",
             "id_card": "", "phone": "", "diagnosis": "",
-            "admission_time": "", "doctor": "", "note": "",
+            "admission_time": "", "doctor": "", "note": "", "photo": "",
             "created": "", "updated": "",
         }
     return _patient_to_dict(p)
@@ -233,9 +239,33 @@ def upsert_patient(payload: PatientUpdate, db: Session = Depends(get_db)):
     p.admission_time = payload.admission_time
     p.doctor = payload.doctor
     p.note = payload.note
+    if payload.photo and str(payload.photo).strip().startswith("data:image"):
+        p.photo = payload.photo
     p.updated = datetime.now()
     db.commit()
     return {"ok": True, "msg": "患者档案已保存"}
+
+
+@router.post("/patient/avatar")
+def update_patient_avatar(payload: AvatarUpdate, db: Session = Depends(get_db)):
+    """仅更新患者头像（前端裁剪后直接传 base64 Data URI）"""
+    photo_str = (payload.photo or "").strip()
+    if not photo_str:
+        return {"ok": False, "msg": "头像数据为空"}
+    if not photo_str.startswith("data:image"):
+        return {"ok": False, "msg": "头像格式不支持，请使用图片文件"}
+    # 限制大小：约 2MB (base64 后约 2.7M)
+    if len(photo_str) > 3000000:
+        return {"ok": False, "msg": "图片过大，请选择小一点的图片"}
+
+    p = db.query(Patient).filter(Patient.device_id == payload.device_id).first()
+    if not p:
+        p = Patient(device_id=payload.device_id)
+        db.add(p)
+    p.photo = photo_str
+    p.updated = datetime.now()
+    db.commit()
+    return {"ok": True, "msg": "头像已更新", "photo": photo_str}
 
 
 @router.delete("/patient")

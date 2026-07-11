@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, Text
 from datetime import datetime
 from app.database.database import Base
 
@@ -19,5 +19,6 @@ class Patient(Base):
     admission_time = Column(String, comment="入院时间")
     doctor = Column(String, comment="主管医生")
     note = Column(String, comment="备注")
+    photo = Column(Text, comment="患者头像（base64 Data URI，用于前端直接渲染）")
     created = Column(DateTime, default=datetime.now, comment="档案创建时间")
     updated = Column(DateTime, default=datetime.now, onupdate=datetime.now, comment="档案更新时间")
