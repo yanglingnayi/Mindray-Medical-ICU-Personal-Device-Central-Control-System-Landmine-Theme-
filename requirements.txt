@@ -7,3 +7,4 @@ hl7
 python-multipart
 websockets
 pydantic>=2.0
+matplotlib

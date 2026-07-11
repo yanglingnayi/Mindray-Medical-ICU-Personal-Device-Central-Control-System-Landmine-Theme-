@@ -10,14 +10,23 @@ __pycache__/
 .vscode/
 *.swp
 *.swo
+.cursorignore
+.cursor/
 
-# Database  （仅数据库不提交，避免上传个人患者数据）
+# Database  （⚠️ 数据库绝对不提交，避免上传患者数据、监护记录等私人信息）
 *.db
 *.sqlite
 *.sqlite3
 data/
 monitor_data.db
 monitor.db
+
+# 临时脚本 / 调试产物 / 输出（只在本机调试时用，不纳入版本管理）
+_*.py
+_*.txt
+check_db.py
+*.bak*
+*.bak
 
 # Logs
 logs/
